@@ -21,7 +21,7 @@
       class="p-5 rounded shadow bg-light"
       style="width: 100%; max-width: 400px; min-width: 280px"
     >
-      <!-- 🟢 Étape 1 : Choix client ou particulier -->
+      <!-- Étape 1 : Choix client ou particulier -->
       <div id="choixType">
         <h4 class="text-center mb-4">Vous êtes :</h4>
         <div class="d-grid gap-3">
