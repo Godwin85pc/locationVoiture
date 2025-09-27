@@ -4,27 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réservation - Location de Véhicules</title>
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Ton CSS personnalisé -->
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    <!-- CSS personnalisé -->
+    <link rel="stylesheet" href="{{ asset('css/reservation.css') }}">
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <!-- Barre de navigation -->
-    <nav class="navbar navbar-light bg-primary px-3">
-        <a class="navbar-brand text-white" href="{{ url('/') }}">LocationVoiture</a>
-        <a href="#" data-bs-toggle="modal" data-bs-target="#choixConnexion" class="d-none d-md-inline text-white">Se connecter</a>
-        <div class="dropdown d-md-none">
-            <button class="btn btn-primary dropdown-toggle border-white text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">☰</button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">À propos</a></li>
-                <li><a class="dropdown-item" href="#">Questions</a></li>
-            </ul>
-        </div>
-    </nav>
 
+  <!-- Barre de navigation -->
+  <nav class="navbar navbar-light bg-primary px-3">
+    <!-- Nom du site -->
+    <a class="navbar-brand text-white" href="{{ url('/') }}">MonSite</a>
+
+    <!-- Bouton hamburger à droite -->
+    <div class="dropdown ms-auto">
+      <button class="navbar-toggler" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <!-- route() remplacé par url() -->
+        <li><a class="dropdown-item" href="{{ url('/login') }}">Se connecter</a></li>
+        <li><a class="dropdown-item" href="#">À propos</a></li>
+        <li><a class="dropdown-item" href="#">Questions</a></li>
+      </ul>
+    </div>
+  </nav>
     <!-- Contenu principal -->
     <div class="container mt-4 flex-grow-1">
         <div class="row">

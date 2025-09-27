@@ -1,174 +1,92 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('reservation-form');
-    if (!form) return;
+// Gestion de la soumission du formulaire
+document.getElementById('reservation-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let isValid = true;
 
-    let formSubmitted = false;
+    function validateField(fieldId, errorId, validationFn) {
+        const field = document.getElementById(fieldId);
+        const error = document.getElementById(errorId);
 
-    const fields = [
-        'lastName', 'firstName', 'email', 'phone', 'birthDate',
-        'address', 'postalCode', 'city', 'country',
-        'password', 'confirmPassword', 'cardholder', 'cardNumber', 'expiryDate', 'cvv', 'terms'
-    ];
-
-    function showError(inputId, message) {
-        const input = document.getElementById(inputId);
-        const errorDiv = document.getElementById(`${inputId}-error`);
-        if (errorDiv) {
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-        }
-        if (input) input.classList.add('is-invalid');
-    }
-
-    function hideError(inputId) {
-        const input = document.getElementById(inputId);
-        const errorDiv = document.getElementById(`${inputId}-error`);
-        if (errorDiv) errorDiv.style.display = 'none';
-        if (input) input.classList.remove('is-invalid');
-    }
-
-    function validateField(fieldId) {
-        const input = document.getElementById(fieldId);
-        switch(fieldId) {
-            case 'email':
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) {
-                    showError(fieldId, 'Veuillez saisir une adresse email valide.');
-                } else {
-                    hideError(fieldId);
-                }
-                break;
-            case 'password':
-                if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(input.value)) {
-                    showError(fieldId, 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.');
-                } else {
-                    hideError(fieldId);
-                }
-                break;
-            case 'confirmPassword':
-                const password = document.getElementById('password').value;
-                if (input.value !== password) {
-                    showError(fieldId, 'Les mots de passe ne correspondent pas.');
-                } else {
-                    hideError(fieldId);
-                }
-                break;
-            case 'cardNumber':
-                if (input.value.replace(/\s/g, '').length !== 16) {
-                    showError(fieldId, 'Veuillez saisir un numéro de carte valide.');
-                } else {
-                    hideError(fieldId);
-                }
-                break;
-            case 'expiryDate':
-                if (!/^(0[1-9]|1[0-2])\/([0-9]{2})$/.test(input.value)) {
-                    showError(fieldId, 'Veuillez saisir la date d\'expiration au format MM/AA.');
-                } else {
-                    hideError(fieldId);
-                }
-                break;
-            case 'cvv':
-                if (!/^[0-9]{3,4}$/.test(input.value)) {
-                    showError(fieldId, 'Veuillez saisir le code CVV.');
-                } else {
-                    hideError(fieldId);
-                }
-                break;
-            case 'terms':
-                if (!input.checked) {
-                    showError(fieldId, 'Vous devez accepter les conditions générales pour continuer.');
-                } else {
-                    hideError(fieldId);
-                }
-                break;
-            default:
-                if (input.value.trim() === '') {
-                    showError(fieldId, 'Veuillez remplir ce champ.');
-                } else {
-                    hideError(fieldId);
-                }
+        if (!validationFn(field.value)) {
+            field.classList.add('is-invalid');
+            error.style.display = 'block';
+            isValid = false;
+        } else {
+            field.classList.remove('is-invalid');
+            error.style.display = 'none';
         }
     }
 
-    // Password strength bar
-    const password = document.getElementById('password');
-    const passwordStrength = document.getElementById('password-strength');
+    // Validation des champs
+    validateField('lastName', 'lastName-error', v => v.trim() !== '');
+    validateField('firstName', 'firstName-error', v => v.trim() !== '');
+    validateField('email', 'email-error', v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+    validateField('phone', 'phone-error', v => v.trim() !== '');
+    validateField('birthDate', 'birthDate-error', v => v.trim() !== '');
+    validateField('address', 'address-error', v => v.trim() !== '');
+    validateField('postalCode', 'postalCode-error', v => v.trim() !== '');
+    validateField('city', 'city-error', v => v.trim() !== '');
+    validateField('country', 'country-error', v => v !== '');
 
-    if (password && passwordStrength) {
-        password.addEventListener('input', function() {
-            const pass = this.value;
-            let strength = 0;
-            if(pass.length >= 8) strength++;
-            if(/[A-Z]/.test(pass)) strength++;
-            if(/[a-z]/.test(pass)) strength++;
-            if(/\d/.test(pass)) strength++;
-            switch(strength) {
-                case 0:
-                    passwordStrength.style.background = '#dc3545';
-                    passwordStrength.style.width = '0%';
-                    break;
-                case 1:
-                    passwordStrength.style.background = '#dc3545';
-                    passwordStrength.style.width = '25%';
-                    break;
-                case 2:
-                    passwordStrength.style.background = '#fd7e14';
-                    passwordStrength.style.width = '50%';
-                    break;
-                case 3:
-                    passwordStrength.style.background = '#ffc107';
-                    passwordStrength.style.width = '75%';
-                    break;
-                case 4:
-                    passwordStrength.style.background = '#198754';
-                    passwordStrength.style.width = '100%';
-                    break;
-            }
-        });
+    validateField('password', 'password-error', v => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(v));
+
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword');
+    const confirmPasswordError = document.getElementById('confirmPassword-error');
+
+    if (confirmPassword.value !== password) {
+        confirmPassword.classList.add('is-invalid');
+        confirmPasswordError.style.display = 'block';
+        isValid = false;
+    } else {
+        confirmPassword.classList.remove('is-invalid');
+        confirmPasswordError.style.display = 'none';
     }
 
-    // Validation à la soumission
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        formSubmitted = true;
-        let valid = true;
+    validateField('cardholder', 'cardholder-error', v => v.trim() !== '');
+    validateField('cardNumber', 'cardNumber-error', v => v.replace(/\s/g, '').length === 16);
+    validateField('expiryDate', 'expiryDate-error', v => /^(0[1-9]|1[0-2])\/([0-9]{2})$/.test(v));
+    validateField('cvv', 'cvv-error', v => /^[0-9]{3,4}$/.test(v));
 
-        fields.forEach(field => {
-            const input = document.getElementById(field);
-            if(field === 'terms') {
-                if(!input.checked) {
-                    showError(field, 'Vous devez accepter les conditions générales pour continuer.');
-                    valid = false;
-                } else {
-                    hideError(field);
-                }
-            } else if(input && input.value.trim() === '') {
-                showError(field, 'Veuillez remplir ce champ.');
-                valid = false;
-            } else {
-                validateField(field);
-                if (document.getElementById(`${field}-error`).style.display === 'block') {
-                    valid = false;
-                }
-            }
-        });
+    const termsCheckbox = document.getElementById('terms');
+    const termsError = document.getElementById('terms-error');
 
-        if(valid) {
-            const submitBtn = document.querySelector('#reservation-form button[type="submit"]');
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Traitement en cours...';
-            submitBtn.disabled = true;
+    if (!termsCheckbox.checked) {
+        termsCheckbox.classList.add('is-invalid');
+        termsError.style.display = 'block';
+        isValid = false;
+    } else {
+        termsCheckbox.classList.remove('is-invalid');
+        termsError.style.display = 'none';
+    }
 
-            setTimeout(() => {
-                alert('Paiement traité avec succès! Votre réservation est confirmée.');
-                submitBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Réservation confirmée';
-                submitBtn.classList.remove('btn-primary');
-                submitBtn.classList.add('btn-success');
-                form.reset();
-                if(passwordStrength) {
-                    passwordStrength.style.width = '0%';
-                    passwordStrength.style.backgroundColor = '';
-                }
-                formSubmitted = false;
-            }, 2000);
+    if (isValid) {
+        const submitBtn = document.querySelector('#reservation-form button[type="submit"]');
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Traitement en cours...';
+        submitBtn.disabled = true;
+
+        setTimeout(() => {
+            alert('Paiement traité avec succès! Votre réservation est confirmée.');
+            submitBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Réservation confirmée';
+            submitBtn.classList.remove('btn-primary');
+            submitBtn.classList.add('btn-success');
+
+            document.getElementById('reservation-form').reset();
+            document.getElementById('password-strength').style.backgroundColor = '';
+        }, 2000);
+    }
+});
+
+// Affichage erreurs temps réel
+document.querySelectorAll('#reservation-form [required]').forEach(field => {
+    field.addEventListener('blur', function() {
+        this.classList.remove('is-invalid');
+        const errorId = this.id + '-error';
+        if (document.getElementById(errorId)) {
+            document.getElementById(errorId).style.display = 'none';
         }
     });
 });
+
+// Force mot de passe
+document.get

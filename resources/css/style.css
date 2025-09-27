@@ -1,126 +1,71 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-
 body {
     background-color: #f8f9fa;
-    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif  !important ;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.navbar.bg-primary {
-    background-color: #0d6efd !important;
+/* Nav mobile */
+.navbar-toggler {
+    border: none;
+}
+.navbar-toggler-icon {
+    filter: invert(1);
+    width: 2rem;
+    height: 2rem;
 }
 
 .reservation-card, .summary-card {
     border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    margin-bottom: 24px;
-    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 .card-header {
-    border-radius: 12px 12px 0 0 !important;
-    background: #fff;
-    border-bottom: 1px solid #e9ecef;
+    border-radius: 10px 10px 0 0 !important;
 }
 
 .section-title {
     color: #0d6efd;
-    font-weight: 700;
-    font-size: 1.15rem;
+    font-weight: 600;
     padding-bottom: 10px;
     border-bottom: 2px solid #e9ecef;
-    margin-bottom: 18px;
 }
 
 .vehicle-thumbnail {
     width: 80px;
     height: 60px;
     object-fit: cover;
-    border-radius: 7px;
-    border: 1px solid #e9ecef;
-    background: #f8f9fa;
+    border-radius: 5px;
 }
 
-.summary-card .card-header {
-    background: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.summary-section h6,
-.summary-section strong {
-    color: #212529;
-    font-weight: 600;
-}
-
-.pack-summary {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 16px;
+.pack-card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
     border-left: 4px solid #0d6efd;
-    margin-bottom: 10px;
 }
 
-.pack-summary strong,
-.pack-summary .pack-price {
+.pack-price {
+    font-size: 1.2rem;
+    font-weight: bold;
     color: #0d6efd;
-    font-weight: 700;
-}
-
-.pack-features i {
-    color: #198754;
-}
-
-.price-details span {
-    color: #212529;
 }
 
 .total-price {
-    font-size: 1.2rem;
-    color: #0d6efd;
-    font-weight: 700;
-}
-
-.summary-section .total-price strong {
-    color: #0d6efd;
     font-size: 1.3rem;
-}
-
-.summary-section {
-    margin-bottom: 18px;
-}
-
-.summary-section hr {
-    margin: 12px 0;
-}
-
-.card.summary-card {
-    border: none;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    background: #fff;
-}
-
-.card-body.text-center i.fa-headset {
     color: #0d6efd;
-}
-
-.card-body.text-center h6,
-.card-body.text-center h5 {
-    color: #0d6efd;
-    font-weight: 700;
 }
 
 footer {
-    background-color: #212529 !important;
+    background-color: #212529;
     color: white;
-    margin-top: auto;
-    font-size: 0.98rem;
+    padding: 40px 0;
+    margin-top: 40px;
 }
 
 footer h5 {
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 20px;
 }
 
@@ -143,7 +88,6 @@ footer .input-group {
     border: none;
     padding: 12px;
     font-weight: 600;
-    font-size: 1.05rem;
 }
 
 .btn-primary:hover {
@@ -154,8 +98,6 @@ footer .input-group {
     height: 5px;
     margin-top: 5px;
     border-radius: 5px;
-    width: 0%;
-    transition: width 0.3s ease;
 }
 
 .terms-content {
@@ -170,7 +112,7 @@ footer .input-group {
 
 .error-message {
     color: #dc3545;
-    font-size: 0.95em;
+    font-size: 0.875em;
     margin-top: 0.25rem;
     display: none;
 }
@@ -185,9 +127,6 @@ footer .input-group {
         width: 60px;
         height: 45px;
     }
-    .reservation-card, .summary-card {
-        border-radius: 8px;
-    }
 }
 
 /* Animation for form submission */
@@ -198,12 +137,4 @@ footer .input-group {
 
 .reservation-card {
     animation: fadeIn 0.5s ease-in;
-}
-
-.flex-grow-1 {
-    flex-grow: 1;
-}
-
-.min-vh-100 {
-    min-height: 100vh;
 }
