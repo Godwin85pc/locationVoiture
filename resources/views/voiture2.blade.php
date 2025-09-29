@@ -149,6 +149,14 @@
     <hr class="bg-light">
     <div class="text-center">&copy; 2025 LocationVoiture. Tous droits réservés.</div>
   </div>
+
+  <div class="
+  
+  .3
+  69+
+  36
+  +93
+  "></div>
 </footer>
 
 <!-- Modal détails -->

@@ -17,12 +17,12 @@ Route::get('/01-ajout_voiture', function () {
 })->name('01-ajout_voiture');
 
 Route::get('/02-options_extras', function () {
-    return view('options_extras'); // resources/views/connection.blade.php
-})->name('options_extras');
+    return view('02-options_extras'); // resources/views/connection.blade.php
+})->name('02-options_extras');
 
-Route::get('/03-maintanace', function () {
-    return view('03-maintanace'); // resources/views/connection.blade.php
-})->name('03-maintanace');
+Route::get('/03-maintenance', function () {
+    return view('03-maintenance'); // resources/views/connection.blade.php
+})->name('03-maintenance');
 
 Route::get('/04-pricing_info', function () {
     return view('04-pricing_info'); // resources/views/connection.blade.php

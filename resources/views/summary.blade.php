@@ -21,12 +21,12 @@
         <p>Immatriculation : AB-123-CD</p>
         <div class="d-flex flex-wrap gap-2">
           <!-- Bouton Modifie0r les infos -->
-          <a href="{{ route('1-ajout_voiture') }}" class="btn btn-outline-primary">Modifier les infos</a>
+          <a href="{{ url('1-ajout_voiture') }}" class="btn btn-outline-primary">Modifier les infos</a>
           <!-- Autres boutons restent inchangés -->
           <button class="btn btn-outline-success">Ajouter des photos</button>
           <button class="btn btn-outline-warning">Mettre à jour calendrier</button>
           <!-- Bouton Valider l’annonce -->
-          <a href="{{ route('connection') }}" class="btn btn-outline-danger">Valider l’annonce</a>
+          <a href="{{ url('inscrit') }}" class="btn btn-outline-danger">Valider l’annonce</a>
         </div>
       </div>
     </div>

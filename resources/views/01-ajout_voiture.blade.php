@@ -83,7 +83,7 @@
         </div>
 
         <!-- BOUTON = LIEN -->
-        <a href="{{ url('resources\views\02-options_extras') }}" class="btn btn-custom w-100">
+        <a href="{{ url('02-options_extras') }}" class="btn btn-custom w-100">
           <i class="fa-solid fa-arrow-right"></i> Suivant
         </a>
       </form>
