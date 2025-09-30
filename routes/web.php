@@ -1,7 +1,28 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UtilisateurController;
+use App\Http\Controllers\VehiculeController;
+use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\PaiementController;
+use App\Http\Controllers\CommisionController;
 
+// Utilisateurs
+Route::resource('utilisateurs', UtilisateurController::class);
+
+// Véhicules
+Route::resource('vehicules', VehiculeController::class);
+
+// Réservations
+Route::resource('reservations', ReservationController::class);
+
+// Paiements
+Route::resource('paiements', PaiementController::class);
+
+// Commissions
+Route::resource('commissions', CommisionController::class);
+
+// Page d'accueil
 Route::get('/', function () {
     return view('index');
 });
