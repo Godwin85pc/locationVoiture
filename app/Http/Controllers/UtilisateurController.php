@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Utilisateur;
+use \App\Models\Vehicule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UtilisateurController extends Controller
 {
@@ -102,5 +104,19 @@ class UtilisateurController extends Controller
         $utilisateur->delete();
 
         return redirect()->route('utilisateurs.index')->with('success', 'Utilisateur supprimé avec succès.');
+    }
+
+    /**
+     * Display the admin dashboard.
+     */
+    public function adminDashboard()
+    {
+        $utilisateurs = Utilisateur::all();
+        $clients = Utilisateur::where('role', 'client')->get();
+        $particuliers = Utilisateur::where('role', 'particulier')->get();
+        $admins = Utilisateur::where('role', 'admin')->get();
+        $vehicules = Vehicule::where('proprietaire_id', optional(Auth::user())->id)->get();
+
+        return view('admin.dashboard', compact('utilisateurs', 'clients', 'particuliers', 'admins', 'vehicules'));
     }
 }

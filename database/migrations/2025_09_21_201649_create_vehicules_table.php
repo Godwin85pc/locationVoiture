@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('vehicules', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('proprietaire_id');
+            
             $table->string('marque', 100);
             $table->string('modele', 100);
             $table->enum('type', ['SUV', 'Berline', 'Utilitaire', 'Citadine']);

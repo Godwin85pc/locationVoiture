@@ -63,7 +63,7 @@
                     <li class="nav-item"><a class="nav-link" href="#">Véhicules</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Réservations</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                    <li class="nav-item"><a class="nav-link" href="conecter.html">Se connecter</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('connexion') }}">Se connecter</a></li>
                 </ul>
             </div>
         </div>

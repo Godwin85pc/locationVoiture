@@ -8,7 +8,9 @@ use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\CommisionController;
 
 // Utilisateurs
+
 Route::resource('utilisateurs', UtilisateurController::class);
+
 
 // Véhicules
 Route::resource('vehicules', VehiculeController::class);
@@ -22,15 +24,19 @@ Route::resource('paiements', PaiementController::class);
 // Commissions
 Route::resource('commissions', CommisionController::class);
 
+
+Route::get('/admin', [UtilisateurController::class, 'adminDashboard'])->name('admin.dashboard');
+
+
 // Page d'accueil
 Route::get('/', function () {
     return view('index');
 });
 
 // Page de connexion
-Route::get('/connection', function () {
-    return view('connection'); // resources/views/connection.blade.php
-})->name('connection');
+Route::get('/connexion', function () {
+    return view('connexion'); // resources/views/connexion.blade.php
+})->name('connexion');
 
 // Page de connexion
 Route::get('/01-ajout_voiture', function () {
@@ -60,3 +66,6 @@ Route::get('/inscrit', function () {
 Route::get('/summary', function () {
     return view('summary'); // resources/views/connection.blade.php
 })->name('summary');
+
+
+

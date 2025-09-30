@@ -42,11 +42,12 @@
         </div>
       </div>
 
-      <!-- 🔒 Étape 2 : Formulaire de connexion -->
+      <!--  Formulaire de connexion -->
       <div id="formConnexion" style="display: none;">
         <h3 class="text-center mb-4" id="titreForm">Connexion</h3>
 
-        <form>
+        <form method="POST" action="{{ route('01-ajout_voiture') }}">
+          @csrf
           <div class="mb-3">
             <label for="email" class="form-label">Adresse e-mail</label>
             <input
