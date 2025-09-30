@@ -2,21 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Utilisateur extends Model
+class Utilisateur extends Authenticatable
 {
+    use Notifiable;
+
     protected $table = 'utilisateurs';
 
     protected $fillable = [
-        'nom',
-        'prenom',
-        'email',
-        'mot_de_passe',
-        'telephone',
-        'role',
-        'date_creation',
+        'nom', 'prenom', 'email', 'mot_de_passe', 'telephone', 'role', 'date_creation'
     ];
 
-    public $timestamps = false;
+    protected $hidden = [
+        'mot_de_passe', 'remember_token',
+    ];
+
+    public function getAuthPassword()
+    {
+        return $this->mot_de_passe;
+    }
 }

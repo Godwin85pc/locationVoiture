@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('telephone', 20)->nullable();
             $table->enum('role', ['admin', 'client', 'particulier'])->default('client');
             $table->timestamp('date_creation')->useCurrent();
+            $table->rememberToken();
         });
     }
 

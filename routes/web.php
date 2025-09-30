@@ -1,71 +1,39 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UtilisateurController;
-use App\Http\Controllers\VehiculeController;
-use App\Http\Controllers\ReservationController;
-use App\Http\Controllers\PaiementController;
-use App\Http\Controllers\CommisionController;
 
-// Utilisateurs
-
-Route::resource('utilisateurs', UtilisateurController::class);
-
-
-// Véhicules
-Route::resource('vehicules', VehiculeController::class);
-
-// Réservations
-Route::resource('reservations', ReservationController::class);
-
-// Paiements
-Route::resource('paiements', PaiementController::class);
-
-// Commissions
-Route::resource('commissions', CommisionController::class);
-
-
-Route::get('/admin', [UtilisateurController::class, 'adminDashboard'])->name('admin.dashboard');
-
-
-// Page d'accueil
 Route::get('/', function () {
     return view('index');
 });
 
-// Page de connexion
-Route::get('/connexion', function () {
-    return view('connexion'); // resources/views/connexion.blade.php
-})->name('connexion');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-// Page de connexion
-Route::get('/01-ajout_voiture', function () {
-    return view('01-ajout_voiture'); // resources/views/connection.blade.php
-})->name('01-ajout_voiture');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-Route::get('/02-options_extras', function () {
-    return view('options_extras'); // resources/views/connection.blade.php
-})->name('options_extras');
+Route::get('/redirect-after-login', function () {
+    $user = Auth::user();
+    if ($user->role === 'particulier') {
+        return redirect()->route('ajout_voitures');
+    } elseif ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } else {
+        return redirect()->route('dashboard');
+    }
+})->middleware('auth');
 
-Route::get('/03-maintanace', function () {
-    return view('03-maintanace'); // resources/views/connection.blade.php
-})->name('03-maintanace');
+Route::get('/01-ajout_voitures', function () {
+    return view('01-ajout_voitures');
+})->name('ajout_voitures')->middleware('auth');
 
-Route::get('/04-pricing_info', function () {
-    return view('04-pricing_info'); // resources/views/connection.blade.php
-})->name('04-pricing_info');
+Route::get('/admin', [UtilisateurController::class, 'adminDashboard'])->name('admin.dashboard')->middleware('auth');
 
-Route::get('/05-set_prices', function () {
-    return view('05-set_prices'); // resources/views/connection.blade.php
-})->name('05-set_prices');
-
-Route::get('/inscrit', function () {
-    return view('inscrit'); // resources/views/connection.blade.php
-})->name('inscrit');
-
-Route::get('/summary', function () {
-    return view('summary'); // resources/views/connection.blade.php
-})->name('summary');
-
-
-
+require __DIR__.'/auth.php';
