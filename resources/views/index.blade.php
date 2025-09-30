@@ -179,12 +179,10 @@
             <a href="#" class="text-decoration-underline text-success fw-semibold">Êtes-vous client fidèle ?</a>
         </p>
         <!-- Bouton Rechercher -->
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">
-                <i class="bi bi-search"></i> Rechercher
-            </button>
-        </div>
-    </div>
+       <a href="{{ url('voiture2') }}" 
+   class="btn btn-primary btn-lg px-5 shadow">
+    <i class="bi bi-search"></i> Rechercher
+</a>
 </section>
 <!-- ...existing code... -->
 <!-- Ajoute l'icône Bootstrap Icons CDN dans le <head> -->
