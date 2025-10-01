@@ -8,7 +8,16 @@
     <title>Location de véhicules - Accueil</title>
     <!-- Bootstrap CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+   
     <style>
+        .navbar-toggler {
+      border: none;
+    }
+    .navbar-toggler-icon {
+      filter: invert(1); /* rend les 3 barres blanches */
+      width: 2rem;
+      height: 2rem;
+    }
         body {
             background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
             min-height: 100vh;
@@ -51,23 +60,24 @@
 </head>
 <body>
     <!-- Barre de navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm px-3">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-white" href="#">LocationVoiture</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Véhicules</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Réservations</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                    <li class="nav-item"><a class="nav-link" href="conecter.html">Se connecter</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+  <nav class="navbar navbar-light bg-primary px-3">
+    <!-- Nom du site -->
+    <a class="navbar-brand text-white" href="#">MonSite</a>
+
+    <!-- Bouton hamburger à droite -->
+    <div class="dropdown ms-auto">
+      <button class="navbar-toggler" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="{{ url('connection') }}">Se connecter</a></li>
+        <li><a class="dropdown-item" href="#">À propos</a></li>
+        <li><a class="dropdown-item" href="{{ url('01-ajout_voiture') }}">Louer ma voiture</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  
 
     <!-- Section Hero / Accueil -->
     <section class="hero container">
@@ -190,21 +200,48 @@
 <!-- Ajoute l'icône Bootstrap Icons CDN dans le <head> -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-    <footer class="bg-dark text-white py-3 mt-5">
-        <div class="container d-flex justify-content-between align-items-start flex-wrap" style="gap: 1rem">
-            <!-- Infos à gauche -->
-            <div class="pe-3">
-                <p class="mb-1"><strong>AutoLocation+</strong></p>
-                <p class="mb-1">123 Rue de la Location</p>
-                <p class="mb-0">Ville, Pays</p>
-            </div>
-            <!-- Infos à droite -->
-            <div class="text-end ps-3">
-                <p class="mb-1"><strong>Tél :</strong> +33 6 12 34 56 78</p>
-                <p class="mb-0"><strong>Email :</strong> contact@autolocation.com</p>
-            </div>
+    <!-- Footer noir -->
+<footer class="mt-5 bg-dark text-white">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-md-4 mb-4 mb-md-0">
+        <h5>LocationVoiture</h5>
+        <p>Le meilleur choix pour votre location de véhicule.</p>
+      </div>
+      <div class="col-md-4 mb-4 mb-md-0">
+        <h5>Contact</h5>
+        <p>123 Avenue de Paris, France</p>
+        <p>+33 1 23 45 67 89</p>
+        <p>info@locationvoiture.fr</p>
+      </div>
+      <div class="col-md-4">
+        <h5>Newsletter</h5>
+        <div class="input-group">
+          <input type="email" class="form-control" placeholder="Votre email">
+          <button class="btn btn-primary">S'abonner</button>
         </div>
-    </footer>
+      </div>
+    </div>
+    <hr class="bg-light">
+    <div class="text-center">&copy; 2025 LocationVoiture. Tous droits réservés.</div>
+  </div>
+</footer>
+
+<!-- Modal détails -->
+<div class="modal fade" id="vehicleDetailsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Détails du véhicule</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="vehicleDetailsContent"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
     <!-- Bootstrap JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
