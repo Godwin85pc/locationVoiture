@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -29,22 +29,36 @@ class AuthenticatedSessionController extends Controller
             'mot_de_passe' => ['required', 'string'],
         ]);
 
-        if (Auth::attempt(['email' => $request->email, 'mot_de_passe' => $request->mot_de_passe], $request->boolean('remember'))) {
-            $request->session()->regenerate();
+        // Debug : affiche les données reçues du formulaire
+        // dd($request->all());
 
-            $user = Auth::user();
-            if ($user->role === 'particulier') {
-                return redirect()->route('ajout_voitures');
-            } elseif ($user->role === 'admin') {
-                return redirect()->route('admin.dashboard');
-            } else {
-                return redirect()->route('dashboard');
-            }
+        // Vérifie si l'utilisateur existe
+        $user = \App\Models\Utilisateur::where('email', $request->email)->first();
+        if (!$user) {
+            dd('Email non trouvé');
+        }
+
+        // Vérifie si le mot de passe correspond
+        if (!Hash::check($request->mot_de_passe, $user->mot_de_passe)) {
+            dd('Mot de passe incorrect');
+        }
+
+        // Vérifie le provider utilisé par le guard
+        $providerModel = get_class(Auth::getProvider()->retrieveByCredentials(['email' => $request->email]));
+        if ($providerModel !== \App\Models\Utilisateur::class) {
+            dd('Provider utilisé : ' . $providerModel);
+        }
+
+        // Authentification Laravel
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->mot_de_passe], $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->intended('dashboard');
         }
 
         return back()->withErrors([
-            'email' => 'Les identifiants sont incorrects.',
-        ]);
+           'email' => 'Identifiants non corrects.',
+           'mot_de_passe' => 'Mot de passe non correct.',
+       ]);
     }
 
     /**

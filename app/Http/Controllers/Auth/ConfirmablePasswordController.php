@@ -26,10 +26,10 @@ class ConfirmablePasswordController extends Controller
     {
         if (! Auth::guard('web')->validate([
             'email' => $request->user()->email,
-            'password' => $request->password,
+            'mot_de_passe' => $request->mot_de_passe,
         ])) {
             throw ValidationException::withMessages([
-                'password' => __('auth.password'),
+                'mot_de_passe' => __('auth.password'),
             ]);
         }
 
