@@ -29,10 +29,9 @@ class VehiculeController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'proprietaire_id' => 'required|exists:utilisateurs,id',
-            'marque' => 'required|string|max:100',
-            'modele' => 'required|string|max:100',
+        $request->validate([
+            'marque' => 'required|string|max:255',
+            'modele' => 'required|string|max:255',
             'type' => 'required|in:SUV,Berline,Utilitaire,Citadine',
             'immatriculation' => 'required|string|max:50|unique:vehicules,immatriculation',
             'prix_jour' => 'required|numeric',
@@ -44,9 +43,22 @@ class VehiculeController extends Controller
             'kilometrage' => 'nullable|integer|min:0',
         ]);
 
-        Vehicule::create($validated);
+        Vehicule::create([
+            'user_id' => auth()->id(),
+            'marque' => $request->marque,
+            'modele' => $request->modele,
+            'type' => $request->type,
+            'immatriculation' => $request->immatriculation,
+            'prix_jour' => $request->prix_jour,
+            'statut' => $request->statut,
+            'carburant' => $request->carburant,
+            'nbre_places' => $request->nbre_places,
+            'localisation' => $request->localisation,
+            'photo' => $request->photo,
+            'kilometrage' => $request->kilometrage,
+        ]);
 
-        return redirect()->route('vehicules.index')->with('success', 'Véhicule ajouté avec succès.');
+        return redirect()->route('dashboard')->with('success', 'Véhicule ajouté avec succès !');
     }
 
     /**

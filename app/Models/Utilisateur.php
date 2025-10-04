@@ -42,4 +42,14 @@ class Utilisateur extends Authenticatable implements MustVerifyEmail
     {
         return 'mot_de_passe';
     }
+
+    public function vehicules()
+    {
+        return $this->hasMany(Vehicule::class, 'proprietaire_id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'client_id');
+    }
 }

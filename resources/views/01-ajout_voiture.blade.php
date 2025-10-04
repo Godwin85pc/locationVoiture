@@ -22,46 +22,47 @@
         <i class="fa-solid fa-car-side"></i> Informations du véhicule
       </h3>
 
-      <form>
+      <form action="{{ route('vehicules.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-building"></i> Marque</label>
-            <input type="text" class="form-control" placeholder="Ex: Toyota" required>
+            <input type="text" class="form-control" placeholder="Ex: Toyota" name="marque" required>
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-car"></i> Modèle</label>
-            <input type="text" class="form-control" placeholder="Ex: Corolla" required>
+            <input type="text" class="form-control" placeholder="Ex: Corolla" name="modele" required>
           </div>
         </div>
 
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-hashtag"></i> Immatriculation</label>
-            <input type="text" class="form-control" placeholder="Ex: AB-123-CD" required>
+            <input type="text" class="form-control" placeholder="Ex: AB-123-CD" name="immatriculation" required>
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-calendar"></i> Année</label>
-            <input type="number" class="form-control" placeholder="Ex: 2020" required>
+            <input type="number" class="form-control" placeholder="Ex: 2020" name="annee" required>
           </div>
         </div>
 
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-gas-pump"></i> Carburant</label>
-            <select class="form-select" required>
+            <select class="form-select" name="carburant" required>
               <option value="">-- Choisir --</option>
-              <option>Essence</option>
-              <option>Diesel</option>
-              <option>Hybride</option>
-              <option>Électrique</option>
+              <option value="essence">Essence</option>
+              <option value="diesel">Diesel</option>
+              <option value="hybride">Hybride</option>
+              <option value="electrique">Électrique</option>
             </select>
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-gears"></i> Boîte de vitesse</label>
-            <select class="form-select" required>
+            <select class="form-select" name="boite_vitesse" required>
               <option value="">-- Choisir --</option>
-              <option>Manuelle</option>
-              <option>Automatique</option>
+              <option value="manuelle">Manuelle</option>
+              <option value="automatique">Automatique</option>
             </select>
           </div>
         </div>
@@ -69,23 +70,23 @@
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-users"></i> Nombre de places</label>
-            <input type="number" class="form-control" placeholder="Ex: 5" required>
+            <input type="number" class="form-control" placeholder="Ex: 5" name="nombre_places" required>
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-gauge-high"></i> Kilométrage</label>
-            <input type="number" class="form-control" placeholder="Ex: 50000" required>
+            <input type="number" class="form-control" placeholder="Ex: 50000" name="kilometrage" required>
           </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label"><i class="fa-solid fa-clipboard-list"></i> Description</label>
-          <textarea class="form-control" rows="3" placeholder="Décrivez brièvement votre véhicule..." required></textarea>
+          <textarea class="form-control" rows="3" placeholder="Décrivez brièvement votre véhicule..." name="description" required></textarea>
         </div>
 
         <!-- BOUTON = LIEN -->
-        <a href="{{ url('resources\views\02-options_extras') }}" class="btn btn-custom w-100">
+        <button type="submit" class="btn btn-custom w-100">
           <i class="fa-solid fa-arrow-right"></i> Suivant
-        </a>
+        </button>
       </form>
     </div>
   </div>
