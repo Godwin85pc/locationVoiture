@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UtilisateurController;
 
 Route::get('/', function () {
     return view('index');
@@ -16,37 +19,31 @@ Route::get('/reservation', function () {
     return view('reservation'); // resources/views/connection.blade.php
 })->name('reservation');
 
-// Page de connexion
-Route::get('/connection', function () {
-    return view('connection'); // resources/views/connection.blade.php
-})->name('connection');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-// Page de connexion
-Route::get('/01-ajout_voiture', function () {
-    return view('01-ajout_voiture'); // resources/views/connection.blade.php
-})->name('01-ajout_voiture');
+Route::get('/redirect-after-login', function () {
+    $user = Auth::user();
+    if ($user->role === 'particulier') {
+        return redirect()->route('ajout_voitures');
+    } elseif ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } else {
+        return redirect()->route('dashboard');
+    }
+})->middleware('auth');
 
-Route::get('/02-options_extras', function () {
-    return view('02-options_extras'); // resources/views/connection.blade.php
-})->name('02-options_extras');
+Route::get('/01-ajout_voitures', function () {
+    return view('01-ajout_voitures');
+})->name('ajout_voitures')->middleware('auth');
 
-Route::get('/03-maintenance', function () {
-    return view('03-maintenance'); // resources/views/connection.blade.php
-})->name('03-maintenance');
+Route::get('/admin', [UtilisateurController::class, 'adminDashboard'])->name('admin.dashboard')->middleware('auth');
 
-Route::get('/04-pricing_info', function () {
-    return view('04-pricing_info'); // resources/views/connection.blade.php
-})->name('04-pricing_info');
-
-Route::get('/05-set_prices', function () {
-    return view('05-set_prices'); // resources/views/connection.blade.php
-})->name('05-set_prices');
-
-Route::get('/inscrit', function () {
-    return view('inscrit'); // resources/views/connection.blade.php
-})->name('inscrit');
-
-Route::get('/summary', function () {
-    return view('summary'); // resources/views/connection.blade.php
-})->name('summary');
+require __DIR__.'/auth.php';

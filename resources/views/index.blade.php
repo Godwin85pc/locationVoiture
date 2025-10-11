@@ -1,4 +1,3 @@
-
 <!-- filepath: c:\Users\HP USERS\Desktop\3IL\I2FE\SEMESTRE1\INFORMATIQUE\WEB\PROJETS\locationVoiture\resources\views\index.blade.php -->
 <!DOCTYPE html>
 <html lang="fr">
@@ -63,7 +62,9 @@
                     <li class="nav-item"><a class="nav-link" href="#">Véhicules</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Réservations</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                    <li class="nav-item"><a class="nav-link" href="conecter.html">Se connecter</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">Se connecter</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -119,7 +120,6 @@
 
     <!-- Formulaire de recherche/location -->
 <!-- filepath: c:\Users\HP USERS\Desktop\3IL\I2FE\SEMESTRE1\INFORMATIQUE\WEB\PROJETS\locationVoiture\resources\views\index.blade.php -->
-<!-- ...existing code... -->
 <section id="formulaire-location" class="container d-flex justify-content-center mt-5">
     <div class="p-4 rounded bg-light w-100 shadow-lg border" style="max-width: 600px; background: rgba(255,255,255,0.95);">
         <h4 class="mb-4 text-center text-primary fw-bold">
