@@ -53,11 +53,13 @@ class UtilisateurController extends Controller
     /**
      * Display the specified resource.
      */
+  
     public function show($id)
-    {
-        $utilisateur = Utilisateur::findOrFail($id);
-        return view('utilisateurs.show', compact('utilisateur'));
-    }
+{
+    $vehicule = Vehicule::findOrFail($id);
+    return view('partials.vehicule_details', compact('vehicule'));
+}
+
 
     /**
      * Show the form for editing the specified resource.

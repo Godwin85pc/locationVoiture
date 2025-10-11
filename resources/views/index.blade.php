@@ -120,18 +120,25 @@
 
     <!-- Formulaire de recherche/location -->
 <!-- filepath: c:\Users\HP USERS\Desktop\3IL\I2FE\SEMESTRE1\INFORMATIQUE\WEB\PROJETS\locationVoiture\resources\views\index.blade.php -->
-<section id="formulaire-location" class="container d-flex justify-content-center mt-5">
-    <div class="p-4 rounded bg-light w-100 shadow-lg border" style="max-width: 600px; background: rgba(255,255,255,0.95);">
+ <section id="formulaire-location" class="container d-flex justify-content-center mt-5">
+    <form action="{{ route('recapitulatif') }}" method="POST" 
+          class="p-4 rounded bg-light w-100 shadow-lg border" 
+          style="max-width: 600px; background: rgba(255,255,255,0.95);">
+        @csrf
+
         <h4 class="mb-4 text-center text-primary fw-bold">
             <i class="bi bi-calendar-check"></i> Réservez votre véhicule
         </h4>
+
         <!-- Lieu de récupération -->
         <div class="mb-4">
             <label class="form-label fw-semibold" for="lieuRecup">
                 <i class="bi bi-geo-alt-fill text-primary"></i> Lieu de récupération du véhicule :
             </label>
-            <input type="text" class="form-control form-control-lg" id="lieuRecup" placeholder="Entrez le lieu de récupération" />
+            <input type="text" name="lieuRecup" class="form-control form-control-lg" id="lieuRecup"
+                   placeholder="Entrez le lieu de récupération" required>
         </div>
+
         <!-- Heure de sollicitation -->
         <div class="mb-4">
             <label class="form-label fw-semibold">
@@ -139,20 +146,23 @@
             </label>
             <div class="row g-2">
                 <div class="col">
-                    <input type="date" class="form-control" id="dateDepart" />
+                    <input type="date" name="dateDepart" class="form-control" id="dateDepart" required>
                 </div>
                 <div class="col">
-                    <input type="time" class="form-control" id="heureDepart" />
+                    <input type="time" name="heureDepart" class="form-control" id="heureDepart" required>
                 </div>
             </div>
         </div>
+
         <!-- Lieu de retour -->
         <div class="mb-4">
             <label class="form-label fw-semibold" for="lieuRetour">
                 <i class="bi bi-geo-alt text-primary"></i> Lieu de retour du véhicule :
             </label>
-            <input type="text" class="form-control form-control-lg" id="lieuRetour" placeholder="Entrez le lieu de retour" />
+            <input type="text" name="lieuRetour" class="form-control form-control-lg" id="lieuRetour"
+                   placeholder="Entrez le lieu de retour" required>
         </div>
+
         <!-- Retour du véhicule -->
         <div class="mb-4">
             <label class="form-label fw-semibold">
@@ -160,30 +170,36 @@
             </label>
             <div class="row g-2">
                 <div class="col">
-                    <input type="date" class="form-control" id="dateRetour" />
+                    <input type="date" name="dateRetour" class="form-control" id="dateRetour" required>
                 </div>
                 <div class="col">
-                    <input type="time" class="form-control" id="heureRetour" />
+                    <input type="time" name="heureRetour" class="form-control" id="heureRetour" required>
                 </div>
             </div>
         </div>
+
         <!-- Checkbox -->
         <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" id="ageCheck" />
+            <input class="form-check-input" type="checkbox" name="ageCheck" id="ageCheck">
             <label class="form-check-label fw-semibold" for="ageCheck">
                 <i class="bi bi-person-badge text-primary"></i> Conducteur entre 25 et 30 ans
             </label>
         </div>
+
         <!-- Lien client fidèle -->
         <p class="mb-3 text-center">
             <a href="#" class="text-decoration-underline text-success fw-semibold">Êtes-vous client fidèle ?</a>
         </p>
+
         <!-- Bouton Rechercher -->
-       <a href="{{ url('voiture2') }}" 
-   class="btn btn-primary btn-lg px-5 shadow">
-    <i class="bi bi-search"></i> Rechercher
-</a>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">
+                <i class="bi bi-search"></i> Rechercher
+            </button>
+        </div>
+    </form>
 </section>
+
 <!-- ...existing code... -->
 <!-- Ajoute l'icône Bootstrap Icons CDN dans le <head> -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
