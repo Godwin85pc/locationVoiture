@@ -7,6 +7,8 @@ use App\Http\Controllers\UtilisateurController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\VehiculeController;
 use App\Http\Controllers\ReservationController;
+use App\Models\OffreVehicule;
+use App\Http\Controllers\OffreVehiculeController;
 
 Route::get('/', function () {
     return view('index');
@@ -48,3 +50,8 @@ Route::get('/redirect-after-login', function () {
 Route::get('/admin', [UtilisateurController::class, 'adminDashboard'])->name('admin.dashboard')->middleware('auth');
 
 require __DIR__.'/auth.php';
+
+
+Route::get('/dashboard/offres-disponibles', [OffreVehiculeController::class, 'fetch'])->name('offres.disponibles');
+
+
