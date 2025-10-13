@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Vehicule;
+use Illuminate\Support\Facades\Auth;
 
 class VehiculeController extends Controller
 {
@@ -21,7 +22,7 @@ class VehiculeController extends Controller
      */
     public function create()
     {
-        return view('vehicules.create');
+        return view('01-ajout_voiture'); // Utilise votre vue existante
     }
 
     /**
@@ -35,30 +36,31 @@ class VehiculeController extends Controller
             'type' => 'required|in:SUV,Berline,Utilitaire,Citadine',
             'immatriculation' => 'required|string|max:50|unique:vehicules,immatriculation',
             'prix_jour' => 'required|numeric',
-            'statut' => 'required|in:disponible,reserve,en_location,maintenance',
             'carburant' => 'required|in:Essence,Diesel,Electrique',
             'nbre_places' => 'nullable|integer|min:1',
             'localisation' => 'nullable|string|max:255',
             'photo' => 'nullable|string|max:255',
             'kilometrage' => 'nullable|integer|min:0',
+            'description' => 'nullable|string',
         ]);
 
         Vehicule::create([
-            'user_id' => auth()->id(),
+            'proprietaire_id' => Auth::id(),
             'marque' => $request->marque,
             'modele' => $request->modele,
             'type' => $request->type,
             'immatriculation' => $request->immatriculation,
             'prix_jour' => $request->prix_jour,
-            'statut' => $request->statut,
+            'statut' => 'en_attente', // Statut en attente de validation admin
             'carburant' => $request->carburant,
             'nbre_places' => $request->nbre_places,
             'localisation' => $request->localisation,
             'photo' => $request->photo,
             'kilometrage' => $request->kilometrage,
+            'description' => $request->description,
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Véhicule ajouté avec succès !');
+        return redirect()->route('dashboard')->with('success', 'Véhicule ajouté avec succès ! Il sera visible après validation par un administrateur.');
     }
 
     /**
@@ -76,6 +78,12 @@ class VehiculeController extends Controller
     public function edit($id)
     {
         $vehicule = Vehicule::findOrFail($id);
+        
+        // Vérifier que l'utilisateur est le propriétaire
+        if ($vehicule->proprietaire_id !== Auth::id()) {
+            abort(403, 'Vous ne pouvez modifier que vos propres véhicules.');
+        }
+        
         return view('vehicules.edit', compact('vehicule'));
     }
 
@@ -86,24 +94,28 @@ class VehiculeController extends Controller
     {
         $vehicule = Vehicule::findOrFail($id);
 
+        // Vérifier que l'utilisateur est le propriétaire
+        if ($vehicule->proprietaire_id !== Auth::id()) {
+            abort(403, 'Vous ne pouvez modifier que vos propres véhicules.');
+        }
+
         $validated = $request->validate([
-            'proprietaire_id' => 'required|exists:utilisateurs,id',
             'marque' => 'required|string|max:100',
             'modele' => 'required|string|max:100',
             'type' => 'required|in:SUV,Berline,Utilitaire,Citadine',
             'immatriculation' => 'required|string|max:50|unique:vehicules,immatriculation,' . $id,
             'prix_jour' => 'required|numeric',
-            'statut' => 'required|in:disponible,reserve,en_location,maintenance',
             'carburant' => 'required|in:Essence,Diesel,Electrique',
             'nbre_places' => 'nullable|integer|min:1',
             'localisation' => 'nullable|string|max:255',
             'photo' => 'nullable|string|max:255',
             'kilometrage' => 'nullable|integer|min:0',
+            'description' => 'nullable|string',
         ]);
 
         $vehicule->update($validated);
 
-        return redirect()->route('vehicules.index')->with('success', 'Véhicule modifié avec succès.');
+        return redirect()->route('dashboard')->with('success', 'Véhicule modifié avec succès.');
     }
 
     /**
@@ -112,8 +124,61 @@ class VehiculeController extends Controller
     public function destroy($id)
     {
         $vehicule = Vehicule::findOrFail($id);
+        
+        // Vérifier que l'utilisateur est le propriétaire
+        if ($vehicule->proprietaire_id !== Auth::id()) {
+            abort(403, 'Vous ne pouvez supprimer que vos propres véhicules.');
+        }
+        
         $vehicule->delete();
 
-        return redirect()->route('vehicules.index')->with('success', 'Véhicule supprimé avec succès.');
+        return redirect()->route('dashboard')->with('success', 'Véhicule supprimé avec succès.');
+    }
+
+    /**
+     * Display admin view of all vehicles.
+     */
+    public function adminIndex()
+    {
+        $vehicules = Vehicule::with(['proprietaire'])->orderBy('created_at', 'desc')->get();
+        
+        $stats = [
+            'total' => $vehicules->count(),
+            'en_attente' => $vehicules->where('statut', 'en_attente')->count(),
+            'disponibles' => $vehicules->where('statut', 'disponible')->count(),
+            'loues' => $vehicules->where('statut', 'loue')->count(),
+            'rejetes' => $vehicules->where('statut', 'rejete')->count(),
+        ];
+
+        return view('admin.vehicules.index', compact('vehicules', 'stats'));
+    }
+
+    /**
+     * Approve a vehicle (admin only).
+     */
+    public function approve($id)
+    {
+        $vehicule = Vehicule::findOrFail($id);
+        $vehicule->update(['statut' => 'disponible']);
+
+        return redirect()->route('admin.vehicules.index')->with('success', 'Véhicule approuvé avec succès.');
+    }
+
+    /**
+     * Reject a vehicle (admin only).
+     */
+    public function reject(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'motif_rejet' => 'nullable|string|max:500',
+        ]);
+
+        $vehicule = Vehicule::findOrFail($id);
+        $vehicule->update([
+            'statut' => 'rejete',
+            'motif_rejet' => $validated['motif_rejet'] ?? 'Véhicule rejeté par l\'administrateur'
+        ]);
+
+        return redirect()->route('admin.vehicules.index')->with('success', 'Véhicule rejeté.');
     }
 }

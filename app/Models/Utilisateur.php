@@ -16,31 +16,28 @@ class Utilisateur extends Authenticatable implements MustVerifyEmail
         'nom',
         'prenom',
         'email',
-        'mot_de_passe',
+        'password',
         'telephone',
         'role',
         'date_creation',
     ];
 
     protected $hidden = [
-        'mot_de_passe',
+        'password',
         'remember_token',
     ];
 
     /**
-     * Retourne le mot de passe pour l'authentification.
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
      */
-    public function getAuthPassword()
+    protected function casts(): array
     {
-        return $this->mot_de_passe;
-    }
-
-    /**
-     * Indique à Laravel le nom du champ mot de passe personnalisé.
-     */
-    public function getAuthPasswordName()
-    {
-        return 'mot_de_passe';
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 
     public function vehicules()

@@ -12,14 +12,14 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- Mot de passe -->
+        <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="mot_de_passe" :value="__('Mot de passe')" />
-            <x-text-input id="mot_de_passe" class="block mt-1 w-full"
+            <x-input-label for="password" :value="__('Password')" />
+            <x-text-input id="password" class="block mt-1 w-full"
                           type="password"
-                          name="mot_de_passe"
+                          name="password"
                           required autocomplete="current-password" />
-            <x-input-error :messages="$errors->get('mot_de_passe')" class="mt-2" />
+            <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <!-- Remember Me -->

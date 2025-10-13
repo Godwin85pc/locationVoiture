@@ -10,10 +10,13 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $vehiculesDisponibles = Vehicule::where('disponible', true)->get();
-        $mesVehicules = Auth::user()->vehicules; // relation à définir
-        $mesReservations = Auth::user()->reservations; // relation à définir
-        // $mesReservations = auth()->user()->reservations; // relation à définir
+        $vehiculesDisponibles = Vehicule::where('statut', 'disponible')
+                                       ->where('proprietaire_id', '!=', Auth::id())
+                                       ->get();
+        
+        $mesVehicules = Vehicule::where('proprietaire_id', Auth::id())->get();
+        
+        $mesReservations = collect(); // À adapter selon votre modèle Reservation
 
         return view('dashboard', compact('vehiculesDisponibles', 'mesVehicules', 'mesReservations'));
     }

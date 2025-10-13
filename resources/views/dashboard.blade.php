@@ -4,7 +4,7 @@
 <div class="container-fluid py-4">
     <h2 class="mb-4 text-primary fw-bold">Bienvenue, {{ Auth::user()->name }} !</h2>
 
-    {{-- LAYOUT AVEC SIDEBAR VERTICALE --}}
+    
     <div class="row">
         {{-- SIDEBAR NAVIGATION VERTICALE --}}
         <div class="col-lg-3 col-md-4">

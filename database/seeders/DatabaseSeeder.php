@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Utilisateur;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +13,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Seed optionnel d'un utilisateur de test (client)
+        if (!Utilisateur::where('email', 'client@example.com')->exists()) {
+            Utilisateur::create([
+                'nom' => 'Client',
+                'prenom' => 'Demo',
+                'email' => 'client@example.com',
+                'mot_de_passe' => \Illuminate\Support\Facades\Hash::make('password'),
+                'telephone' => '0600000000',
+                'role' => 'client',
+            ]);
+        }
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Appel du seeder Admin
+        $this->call([
+            AdminSeeder::class,
         ]);
     }
 }
