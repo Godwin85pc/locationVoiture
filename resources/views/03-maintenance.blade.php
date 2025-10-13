@@ -92,6 +92,7 @@
   </nav>
 
   <div class="container d-flex justify-content-center align-items-center my-5" style="min-height:50vh;">
+     @csrf 
     <div class="card p-5 w-50 text-center">
       <h3 class="mb-4 text-primary"><i class="fa-solid fa-screwdriver-wrench"></i> Entretien du véhicule</h3>
       <p>Veuillez confirmer si votre véhicule est <strong>bien entretenu</strong>.</p>
@@ -103,7 +104,7 @@
   <script>
     // Redirection selon le choix
     document.getElementById('ouiBtn').addEventListener('click', () => {
-      window.location.href = "{{ route('04-pricing_info') }}"; // Page suivante si Oui
+      window.location.href = "{{ route('prix') }}"; // Page suivante si Oui
     });
   </script>
   <footer class="mt-5 bg-dark text-white">

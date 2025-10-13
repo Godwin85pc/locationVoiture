@@ -1,4 +1,4 @@
-
+vrai
 <!-- filepath: c:\Users\HP USERS\Desktop\3IL\I2FE\SEMESTRE1\INFORMATIQUE\WEB\PROJETS\locationVoiture\resources\views\index.blade.php -->
 <!DOCTYPE html>
 <html lang="fr">

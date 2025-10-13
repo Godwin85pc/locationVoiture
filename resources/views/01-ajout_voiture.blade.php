@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -8,17 +7,29 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* Police et taille uniforme */
     body {
       font-family: 'Arial', Helvetica, sans-serif;
       font-size: 16px;
-      background: linear-gradient(to right, #6aa0e5, #c0d4f5); /* bleu clair léger */
+      background: linear-gradient(to right, #6aa0e5, #c0d4f5);
       color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 0;
     }
 
     .card {
       border-radius: 20px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      max-width: 800px;
+      width: 100%;
     }
 
     .form-control, .form-select {
@@ -44,20 +55,25 @@
       margin-right: 5px;
     }
 
-    .invalid-feedback { display: none; }
-    .is-invalid + .invalid-feedback { display: block; }
+    footer {
+      background-color: #212529;
+      color: white;
+      margin-top: auto;
+    }
 
     .navbar-toggler {
       border: none;
     }
     .navbar-toggler-icon {
-      filter: invert(1); /* rend les 3 barres blanches */
+      filter: invert(1);
       width: 2rem;
       height: 2rem;
     }
   </style>
 </head>
 <body>
+
+  <!-- Navbar -->
   <nav class="navbar navbar-light" style="background-color:#6aa0e5;">
     <a class="navbar-brand text-white" href="#">MonSite</a>
     <div class="dropdown ms-auto">
@@ -65,86 +81,107 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item"  href="{{ url('connection') }}">Se connecter</a></li>
+        <li><a class="dropdown-item" href="{{ url('connection') }}">Se connecter</a></li>
         <li><a class="dropdown-item" href="#">À propos</a></li>
         <li><a class="dropdown-item" href="{{ url('connection')}}">Louer ma voiture</a></li>
       </ul>
     </div>
   </nav>
 
-  <div class="container d-flex justify-content-center align-items-center py-5">
-    <div class="card p-5 w-75">
+  <!-- Contenu principal -->
+  <main>
+    <div class="card p-5">
       <h3 class="text-center mb-4 text-primary">
         <i class="fa-solid fa-car-side"></i> Informations du véhicule
       </h3>
 
-      <form id="vehicleForm">
+      <!-- ✅ Formulaire sécurisé -->
+      <form action="{{ url('02-options_extras') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-building"></i> Marque</label>
-            <input type="text" class="form-control" placeholder="Ex: Toyota" required>
-            <div class="invalid-feedback">Veuillez entrer la marque du véhicule.</div>
+            <input type="text" name="marque" class="form-control" placeholder="Ex: Toyota" required>
           </div>
+
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-car"></i> Modèle</label>
-            <input type="text" class="form-control" placeholder="Ex: Corolla" required>
-            <div class="invalid-feedback">Veuillez entrer le modèle du véhicule.</div>
+            <input type="text" name="modele" class="form-control" placeholder="Ex: Corolla" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label"><i class="fa-solid fa-euro-sign"></i> Prix journalier (€)</label>
+            <input type="number" name="prix_jour" class="form-control" placeholder="Ex: 45" step="0.01" required>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label"><i class="fa-solid fa-calendar-plus"></i> Date d’ajout</label>
+            <input type="date" name="date_ajout" class="form-control" value="{{ date('Y-m-d') }}" required>
           </div>
         </div>
 
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-hashtag"></i> Immatriculation</label>
-            <input type="text" class="form-control" placeholder="Ex: AB-123-CD" required>
-            <div class="invalid-feedback">Veuillez entrer l'immatriculation.</div>
+            <input type="text" name="immatriculation" class="form-control" placeholder="Ex: AB-123-CD" required>
           </div>
+
           <div class="col-md-6 mb-3">
-            <label class="form-label"><i class="fa-solid fa-calendar"></i> Année</label>
-            <input type="number" class="form-control" placeholder="Ex: 2020" required>
-            <div class="invalid-feedback">Veuillez entrer l'année du véhicule.</div>
+            <label class="form-label"><i class="fa-solid fa-location-dot"></i> Localisation</label>
+            <input type="text" name="localisation" class="form-control" placeholder="Ex: Douala, Bonamoussadi" required>
           </div>
         </div>
 
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-gas-pump"></i> Carburant</label>
-            <select class="form-select" required>
+            <select name="carburant" class="form-select" required>
               <option value="">-- Choisir --</option>
               <option>Essence</option>
               <option>Diesel</option>
               <option>Hybride</option>
               <option>Électrique</option>
             </select>
-            <div class="invalid-feedback">Veuillez sélectionner un type de carburant.</div>
           </div>
+
           <div class="col-md-6 mb-3">
-            <label class="form-label"><i class="fa-solid fa-gears"></i> Boîte de vitesse</label>
-            <select class="form-select" required>
-              <option value="">-- Choisir --</option>
-              <option>Manuelle</option>
-              <option>Automatique</option>
-            </select>
-            <div class="invalid-feedback">Veuillez sélectionner la boîte de vitesse.</div>
+            <label class="form-label"><i class="fa-solid fa-users"></i> Nombre de places</label>
+            <input type="number" name="places" class="form-control" placeholder="Ex: 5" required>
           </div>
         </div>
 
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label class="form-label"><i class="fa-solid fa-users"></i> Nombre de places</label>
-            <input type="number" class="form-control" placeholder="Ex: 5" required>
-            <div class="invalid-feedback">Veuillez entrer le nombre de places.</div>
-          </div>
-          <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-gauge-high"></i> Kilométrage</label>
-            <input type="number" class="form-control" placeholder="Ex: 50000" required>
-            <div class="invalid-feedback">Veuillez entrer le kilométrage.</div>
+            <input type="number" name="kilometrage" class="form-control" placeholder="Ex: 50000" required>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label"><i class="fa-solid fa-car"></i> Type</label>
+            <select name="type" class="form-select" required>
+              <option value="">-- Choisir --</option>
+              <option value="SUV">SUV</option>
+              <option value="Berline">Berline</option>
+              <option value="Utilitaire">Utilitaire</option>
+              <option value="Citadine">Citadine</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <label class="form-label"><i class="fa-solid fa-image"></i> Photo du véhicule</label>
+            <input type="file" name="photo" class="form-control" accept="image/*" required>
+            <small class="text-muted">Formats acceptés : JPG, PNG, JPEG</small>
           </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label"><i class="fa-solid fa-clipboard-list"></i> Description</label>
-          <textarea class="form-control" rows="3" placeholder="Décrivez brièvement votre véhicule..." required></textarea>
-          <div class="invalid-feedback">Veuillez entrer une description.</div>
+          <textarea name="description" class="form-control" rows="3" placeholder="Décrivez brièvement votre véhicule..." required></textarea>
         </div>
 
         <button type="submit" class="btn btn-custom w-100">
@@ -152,74 +189,35 @@
         </button>
       </form>
     </div>
-  </div>
+  </main>
 
-  <script>
-    const form = document.getElementById('vehicleForm');
-
-    form.addEventListener('submit', function(e){
-      e.preventDefault();
-      let valid = true;
-
-      const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
-      inputs.forEach(input => {
-        if(!input.value.trim()){
-          valid = false;
-          input.classList.add('is-invalid');
-        } else {
-          input.classList.remove('is-invalid');
-        }
-      });
-
-      if(valid){
-        window.location.href ="{{ url('02-options_extras') }}";
-      }
-    });
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <footer class="mt-5 bg-dark text-white">
-  <div class="container py-5">
-    <div class="row">
-      <div class="col-md-4 mb-4 mb-md-0">
-        <h5>LocationVoiture</h5>
-        <p>Le meilleur choix pour votre location de véhicule.</p>
-      </div>
-      <div class="col-md-4 mb-4 mb-md-0">
-        <h5>Contact</h5>
-        <p>123 Avenue de Paris, France</p>
-        <p>+33 1 23 45 67 89</p>
-        <p>info@locationvoiture.fr</p>
-      </div>
-      <div class="col-md-4">
-        <h5>Newsletter</h5>
-        <div class="input-group">
-          <input type="email" class="form-control" placeholder="Votre email">
-          <button class="btn btn-primary">S'abonner</button>
+  <!-- Footer -->
+  <footer>
+    <div class="container py-4">
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>LocationVoiture</h5>
+          <p>Le meilleur choix pour votre location de véhicule.</p>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>Contact</h5>
+          <p>123 Avenue de Paris, France</p>
+          <p>+33 1 23 45 67 89</p>
+          <p>info@locationvoiture.fr</p>
+        </div>
+        <div class="col-md-4">
+          <h5>Newsletter</h5>
+          <div class="input-group">
+            <input type="email" class="form-control" placeholder="Votre email">
+            <button class="btn btn-primary">S'abonner</button>
+          </div>
         </div>
       </div>
+      <hr class="bg-light">
+      <div class="text-center">&copy; 2025 LocationVoiture. Tous droits réservés.</div>
     </div>
-    <hr class="bg-light">
-    <div class="text-center">&copy; 2025 LocationVoiture. Tous droits réservés.</div>
-  </div>
-</footer>
+  </footer>
 
-<!-- Modal détails -->
-<div class="modal fade" id="vehicleDetailsModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Détails du véhicule</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body" id="vehicleDetailsContent"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-      </div>
-    </div>
-  </div>
-</div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-

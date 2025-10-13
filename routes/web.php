@@ -21,17 +21,30 @@ Route::resource('paiements', PaiementController::class);
 
 // Commissions
 Route::resource('commissions', CommisionController::class);
+// Page de calcul du prix après formulaire
+Route::post('/vehicules/prix', [VehiculeController::class, 'calculPrix'])->name('vehicules.prix');
+
 
 // Page d'accueil
 Route::get('/', function () {
     return view('index');
     })->name('index');
 
+Route::post('02-options_extras', function (Illuminate\Http\Request $request) {
+    // Tu peux ici stocker les infos du véhicule dans la session
+    // avant d'afficher la page suivante
+    session(['vehicule' => $request->all()]);
+    return view('02-options_extras');
+});
 
 // Page de connexion
 Route::get('/connection', function () {
     return view('connection'); // resources/views/connection.blade.php
 })->name('connection');
+
+Route::get('/prix', function () {
+    return view('prix'); // resources/views/connection.blade.php
+})->name('prix');
 
 // Page de connexion
 Route::get('/01-ajout_voiture', function () {
