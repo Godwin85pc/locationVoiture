@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('modele', 100);
             $table->enum('type', ['SUV', 'Berline', 'Utilitaire', 'Citadine']);
             $table->string('immatriculation', 50)->unique();
-            $table->decimal('prix_jour', 10, 2);
+            $table->decimal('prix_jour', 10, 2)->nullable();
             $table->enum('statut', ['disponible', 'reserve', 'en_location', 'maintenance'])->default('disponible');
             $table->enum('carburant', ['Essence','Diesel','Electrique'])->default('Essence');
             $table->integer('nbre_places')->default(4);

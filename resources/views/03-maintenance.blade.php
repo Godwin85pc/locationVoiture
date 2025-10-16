@@ -104,7 +104,7 @@
   <script>
     // Redirection selon le choix
     document.getElementById('ouiBtn').addEventListener('click', () => {
-      window.location.href = "{{ route('prix') }}"; // Page suivante si Oui
+      window.location.href = "{{ route('resume') }}"; // Page suivante si Oui
     });
   </script>
   <footer class="mt-5 bg-dark text-white">

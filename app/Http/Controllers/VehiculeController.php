@@ -29,8 +29,9 @@ class VehiculeController extends Controller
      */
     public function store(Request $request)
     {
+
         $validated = $request->validate([
-            'proprietaire_id' => 'required|exists:utilisateurs,id',
+            'proprietaire_id' => 'required',
             'marque' => 'required|string|max:100',
             'modele' => 'required|string|max:100',
             'type' => 'required|in:SUV,Berline,Utilitaire,Citadine',
@@ -49,13 +50,12 @@ class VehiculeController extends Controller
     $validated['prix_jour'] = $this->calculerPrixAutomatique($validated['type'], $validated['carburant']);
 
     // ✅ Upload de la photo
-    if ($request->hasFile('photo')) {
-        $validated['photo'] = $request->file('photo')->store('vehicules', 'public');
-    }
-
+     if ($request->hasFile('photo')) {
+          $validated['photo'] = $request->file('photo')->store('vehicules', 'public');
+      }
     Vehicule::create($validated);
-
-    return redirect()->route('vehicules.index')->with('success', 'Véhicule ajouté avec succès.');
+    session(['vehicule' => $validated]);
+    return redirect()->route('02-options_extras')->with('success', 'Véhicule ajouté avec succès.');
 
     }
 
@@ -111,9 +111,20 @@ class VehiculeController extends Controller
         }
 
         $vehicule->update($validated);
-
-        return redirect()->route('vehicules.index')->with('success', 'Véhicule modifié avec succès.');
+        return redirect()->route('vehicules.02-options_extras')->with('success', 'Véhicule modifié avec succès.');
     }
+
+    public function resume()
+{
+    $vehicule = session('vehicule');
+
+    if (!$vehicule) {
+        return redirect()->route('vehicules.create')->with('error', 'Aucun véhicule en mémoire.');
+    }
+
+    return view('prix', compact('vehicule'));
+}
+
 
     /**
      * Supprime un véhicule

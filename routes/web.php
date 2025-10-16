@@ -24,18 +24,19 @@ Route::resource('commissions', CommisionController::class);
 // Page de calcul du prix après formulaire
 Route::post('/vehicules/prix', [VehiculeController::class, 'calculPrix'])->name('vehicules.prix');
 
+Route::put('/vehicules/{id}', [VehiculeController::class, 'update'])->name('vehicules.update');
 
 // Page d'accueil
 Route::get('/', function () {
     return view('index');
     })->name('index');
 
-Route::post('02-options_extras', function (Illuminate\Http\Request $request) {
-    // Tu peux ici stocker les infos du véhicule dans la session
-    // avant d'afficher la page suivante
-    session(['vehicule' => $request->all()]);
-    return view('02-options_extras');
-});
+// Route::post('01-ajout_voiture', function (Illuminate\Http\Request $request) {
+//     // Tu peux ici stocker les infos du véhicule dans la session
+//     // avant d'afficher la page suivante
+//     session(['vehicule' => $request->all()]);
+//     return view('01-ajout_voiture');
+// });
 
 // Page de connexion
 Route::get('/connection', function () {
@@ -74,3 +75,5 @@ Route::get('/inscrit', function () {
 Route::get('/summary', function () {
     return view('summary'); // resources/views/connection.blade.php
 })->name('summary');
+
+Route::get('/resume', [VehiculeController::class, 'resume'])->name('resume');

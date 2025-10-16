@@ -62,7 +62,7 @@
       </h3>
 
       <!-- ✅ FORMULAIRE AVEC PROTECTION CSRF -->
-      <form id="optionsForm" method="POST" action="{{ url('03-maintenance') }}">
+      <form id="optionsForm">
         @csrf  <!-- 🔹 Protection CSRF ici, PAS dans le footer -->
 
         <div class="row">
@@ -98,9 +98,9 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-custom w-100">
-          <i class="fa-solid fa-arrow-right"></i> Suivant
-        </button>
+        <a href="{{ url('03-maintenance') }}"><button  type="button" class="btn btn-custom w-100"><i class="fa-solid fa-arrow-right"></i> Suivant
+        </button> </a>
+          
       </form>
       <!-- ✅ FIN DU FORMULAIRE -->
     </div>

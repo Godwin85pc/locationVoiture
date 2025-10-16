@@ -96,9 +96,10 @@
       </h3>
 
       <!-- ✅ Formulaire sécurisé -->
-      <form action="{{ url('02-options_extras') }}" method="POST" enctype="multipart/form-data">
+      <form action="{{ route('vehicules.store')}}" method="POST" enctype="multipart/form-data">
         @csrf
 
+        <input type="hidden" name="proprietaire_id" value="6">
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-building"></i> Marque</label>
@@ -110,7 +111,16 @@
             <input type="text" name="modele" class="form-control" placeholder="Ex: Corolla" required>
           </div>
         </div>
-
+        
+ <div class="mb-3">
+    <label for="form-label">Statut du véhicule :</label>
+    <select name="statut" id="statut" class="form-control" required>
+        <option value="disponible" selected>Disponible</option>
+        <option value="reserve">Réservé</option>
+        <option value="en_location">En location</option>
+        <option value="maintenance">En maintenance</option>
+    </select>
+ </div>
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-euro-sign"></i> Prix journalier (€)</label>
@@ -149,7 +159,7 @@
 
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-users"></i> Nombre de places</label>
-            <input type="number" name="places" class="form-control" placeholder="Ex: 5" required>
+            <input type="number" name="nbre_places" class="form-control" placeholder="Ex: 5" required>
           </div>
         </div>
 
@@ -174,18 +184,15 @@
         <div class="row">
           <div class="col-md-12 mb-3">
             <label class="form-label"><i class="fa-solid fa-image"></i> Photo du véhicule</label>
-            <input type="file" name="photo" class="form-control" accept="image/*" required>
+            <input type="file" name="photo" class="form-control" accept="image/*" >
             <small class="text-muted">Formats acceptés : JPG, PNG, JPEG</small>
           </div>
         </div>
 
-        <div class="mb-3">
-          <label class="form-label"><i class="fa-solid fa-clipboard-list"></i> Description</label>
-          <textarea name="description" class="form-control" rows="3" placeholder="Décrivez brièvement votre véhicule..." required></textarea>
-        </div>
+        
 
         <button type="submit" class="btn btn-custom w-100">
-          <i class="fa-solid fa-arrow-right"></i> Suivant
+          <i clagroupss="fa-solid fa-arrow-right"></i> Suivant
         </button>
       </form>
     </div>

@@ -94,7 +94,7 @@
       @endif
 
       <div class="prix-box">
-        <h4>Prix par jour : {{ number_format($prix, 0, ',', ' ') }} FCFA</h4>
+        <h4>Prix par jour : {{ number_format($vehicule['prix_jour'], 0, ',', ' ') }} FCFA</h4>
         <small>Prix calculé automatiquement selon le type et le carburant.</small>
       </div>
 
@@ -105,7 +105,7 @@
         <input type="hidden" name="type" value="{{ $vehicule['type'] }}">
         <input type="hidden" name="carburant" value="{{ $vehicule['carburant'] }}">
         <input type="hidden" name="localisation" value="{{ $vehicule['localisation'] }}">
-        <input type="hidden" name="prix_jour" value="{{ $prix }}">
+        <input type="hidden" name="prix_jour" value="{{ $vehicule['prix_jour'] }}">
         @if($vehicule['photo'] ?? false)
           <input type="hidden" name="photo" value="{{ $vehicule['photo'] }}">
         @endif
@@ -113,6 +113,113 @@
         <button type="submit" class="btn btn-custom w-100 mt-3">
           Confirmer et enregistrer
         </button>
+         <!-- 🔽 Nouvelle section : Formulaire de modification -->
+      <div class="update-section">
+        <h4 class="text-center text-primary mb-3">
+          <i class="fa-solid fa-pen-to-square"></i> Modifier les informations du véhicule
+        </h4>
+
+        <form action="{{ route('vehicules.update', $vehicule->id) }}" method="POST" enctype="multipart/form-data">
+          @csrf
+          @method('PUT')
+
+          
+
+   <input type="hidden" name="proprietaire_id" value="{{ $vehicule['proprietaire_id'] }}">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fa-solid fa-building"></i> Marque</label>
+                    <input type="text" name="marque" class="form-control" value="{{ $vehicule['marque'] }}" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fa-solid fa-car"></i> Modèle</label>
+                    <input type="text" name="modele" class="form-control" value="{{ $vehicule['modele'] }}" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="statut" class="form-label">Statut du véhicule :</label>
+                <select name="statut" id="statut" class="form-select" required>
+                    <option value="disponible" {{ $vehicule['statut'] == 'disponible' ? 'selected' : '' }}>Disponible</option>
+                    <option value="reserve" {{ $vehicule['statut'] == 'reserve' ? 'selected' : '' }}>Réservé</option>
+                    <option value="en_location" {{ $vehicule['statut'] == 'en_location' ? 'selected' : '' }}>En location</option>
+                    <option value="maintenance" {{ $vehicule['statut'] == 'maintenance' ? 'selected' : '' }}>En maintenance</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fa-solid fa-euro-sign"></i> Prix journalier (€)</label>
+                    <input type="number" name="prix_jour" class="form-control" value="{{ $vehicule['prix_jour'] }}" step="0.01" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fa-solid fa-calendar-plus"></i> Date d’ajout</label>
+                    <input type="date" name="date_ajout" class="form-control" value="{{ $vehicule['date_ajout'] }}" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fa-solid fa-hashtag"></i> Immatriculation</label>
+                    <input type="text" name="immatriculation" class="form-control" value="{{ $vehicule['immatriculation'] }}" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fa-solid fa-location-dot"></i> Localisation</label>
+                    <input type="text" name="localisation" class="form-control" value="{{ $vehicule['localisation'] }}" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fa-solid fa-gas-pump"></i> Carburant</label>
+                    <select name="carburant" class="form-select" required>
+                        <option value="Essence" {{ $vehicule['carburant'] == 'Essence' ? 'selected' : '' }}>Essence</option>
+                        <option value="Diesel" {{ $vehicule['carburant'] == 'Diesel' ? 'selected' : '' }}>Diesel</option>
+                        <option value="Hybride" {{ $vehicule['carburant'] == 'Hybride' ? 'selected' : '' }}>Hybride</option>
+                        <option value="Électrique" {{ $vehicule['carburant'] == 'Électrique' ? 'selected' : '' }}>Électrique</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fa-solid fa-users"></i> Nombre de places</label>
+                    <input type="number" name="nbre_places" class="form-control" value="{{ $vehicule['nbre_places'] }}" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fa-solid fa-gauge-high"></i> Kilométrage</label>
+                    <input type="number" name="kilometrage" class="form-control" value="{{ $vehicule['kilometrage'] }}" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fa-solid fa-car"></i> Type</label>
+                    <select name="type" class="form-select" required>
+                        <option value="SUV" {{ $vehicule['type'] == 'SUV' ? 'selected' : '' }}>SUV</option>
+                        <option value="Berline" {{ $vehicule['type'] == 'Berline' ? 'selected' : '' }}>Berline</option>
+                        <option value="Utilitaire" {{ $vehicule['type'] == 'Utilitaire' ? 'selected' : '' }}>Utilitaire</option>
+                        <option value="Citadine" {{ $vehicule['type'] == 'Citadine' ? 'selected' : '' }}>Citadine</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label class="form-label"><i class="fa-solid fa-image"></i> Photo du véhicule</label>
+                    <input type="file" name="photo" class="form-control" accept="image/*">
+                    <small class="text-muted">Formats acceptés : JPG, PNG, JPEG</small>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success w-50">
+                    <i class="fa-solid fa-check"></i> OK
+                </button>
+            </div>
       </form>
     </div>
   </div>
