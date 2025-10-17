@@ -9,6 +9,8 @@ use App\Http\Controllers\VehiculeController;
 use App\Http\Controllers\ReservationController;
 use App\Models\OffreVehicule;
 use App\Http\Controllers\OffreVehiculeController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\OffreAgenceController;
 
 Route::get('/', function () {
     return view('index');
@@ -47,7 +49,13 @@ Route::get('/redirect-after-login', function () {
     }
 })->middleware('auth');
 
-Route::get('/admin', [UtilisateurController::class, 'adminDashboard'])->name('admin.dashboard')->middleware('auth');
+Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard')->middleware(['auth', 'admin']);
+
+// Routes pour la gestion des offres d'agence
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('offres', OffreAgenceController::class);
+    Route::patch('offres/{offre}/toggle-status', [OffreAgenceController::class, 'toggleStatus'])->name('offres.toggle-status');
+});
 
 require __DIR__.'/auth.php';
 

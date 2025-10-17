@@ -21,6 +21,8 @@ class Vehicule extends Model
         'photo',
         'date_ajout',
         'kilometrage',
+        'proprietaire_id',
+        'disponible',
     ];
 
     public $timestamps = false;
@@ -28,5 +30,21 @@ class Vehicule extends Model
     public function proprietaire()
     {
         return $this->belongsTo(Utilisateur::class, 'proprietaire_id');
+    }
+
+    public function offres()
+    {
+        return $this->hasMany(OffreVehicule::class);
+    }
+
+    public function offresActives()
+    {
+        return $this->hasMany(OffreVehicule::class)->active();
+    }
+
+    // Accessor pour le prix par jour (utilise prix_jour)
+    public function getPrixParJourAttribute()
+    {
+        return $this->prix_jour;
     }
 }
