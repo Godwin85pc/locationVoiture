@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -26,25 +26,23 @@ class AuthenticatedSessionController extends Controller
     {
         $request->validate([
             'email' => ['required', 'string', 'email'],
-            'mot_de_passe' => ['required', 'string'],
+            'password' => ['required', 'string'],
         ]);
-
-        if (Auth::attempt(['email' => $request->email, 'mot_de_passe' => $request->mot_de_passe], $request->boolean('remember'))) {
+        // Tentative d'authentification avec champ personnalisé password
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->boolean('remember'))) {
             $request->session()->regenerate();
 
             $user = Auth::user();
-            if ($user->role === 'particulier') {
-                return redirect()->route('ajout_voitures');
-            } elseif ($user->role === 'admin') {
-                return redirect()->route('admin.dashboard');
-            } else {
-                return redirect()->route('dashboard');
+            // Redirection selon le rôle
+            if ($user->role === 'admin') {
+                return redirect()->intended(route('admin.dashboard'));
             }
+            return redirect()->intended(route('dashboard'));
         }
 
         return back()->withErrors([
-            'email' => 'Les identifiants sont incorrects.',
-        ]);
+            'email' => 'Identifiants incorrects ou compte inexistant.',
+        ])->onlyInput('email');
     }
 
     /**

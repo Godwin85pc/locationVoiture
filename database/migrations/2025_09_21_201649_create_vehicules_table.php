@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('vehicules', function (Blueprint $table) {
             $table->id();
             
+            // Colonne pour le propriétaire
+            $table->unsignedBigInteger('proprietaire_id');
+
             $table->string('marque', 100);
             $table->string('modele', 100);
             $table->enum('type', ['SUV', 'Berline', 'Utilitaire', 'Citadine']);
@@ -26,7 +29,12 @@ return new class extends Migration
             $table->string('photo', 255)->nullable();
             $table->timestamp('date_ajout')->useCurrent();
             $table->integer('kilometrage')->default(0);
-            $table->foreign('proprietaire_id')->references('id')->on('utilisateurs')->onDelete('cascade');
+
+            // Déclaration de la clé étrangère
+            $table->foreign('proprietaire_id')
+                  ->references('id')
+                  ->on('utilisateurs')
+                  ->onDelete('cascade');
         });
     }
 

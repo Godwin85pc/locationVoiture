@@ -4,14 +4,15 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UtilisateurController;
-use App\Http\Controllers\VehiculeController; // ✅ Import ajouté ici
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\VehiculeController;
+use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\AvisController; // si tu utilises ce controller
 
-//  Page d'accueil
-Route::get('/', function () {
-    return view('index');
-})->name('index');
-
-//  Pages statiques
+// -------------------------
+// Pages publiques / statiques
+// -------------------------
+Route::get('/', fn() => view('index'))->name('index');
 Route::get('/connection', fn() => view('connection'))->name('connection');
 Route::get('/01-ajout_voiture', fn() => view('01-ajout_voiture'))->name('01-ajout_voiture');
 Route::get('/02-options_extras', fn() => view('02-options_extras'))->name('02-options_extras');
@@ -22,51 +23,69 @@ Route::get('/inscrit', fn() => view('inscrit'))->name('inscrit');
 Route::get('/summary', fn() => view('summary'))->name('summary');
 Route::get('/reservation', fn() => view('reservation'))->name('reservation');
 
-//  Page de visualisation des voitures (depuis le contrôleur)
+// -------------------------
+// Routes véhicules / avis publiques
+// -------------------------
 Route::get('/voiture2', [VehiculeController::class, 'index'])->name('voiture2');
 Route::get('/vehicules/{id}', [VehiculeController::class, 'show'])->name('vehicules.show');
 Route::post('/vehicules/{id}/avis', [VehiculeController::class, 'storeAvis'])->name('vehicules.storeAvis');
 Route::post('/avis', [AvisController::class, 'store'])->name('avis.store');
 
+// -------------------------
+// Routes protégées utilisateur
+// -------------------------
 
-//  Tableau de bord
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+//j'ai retire le verified ici 'verified'
+Route::middleware(['auth'])->group(function () {
 
-//  Gestion du profil
-Route::middleware('auth')->group(function () {
+    // Dashboard utilisateur
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Véhicules utilisateur (CRUD complet)
+    Route::get('/vehicules', [VehiculeController::class, 'index'])->name('vehicules.index');
+    Route::get('/vehicules/create', [VehiculeController::class, 'create'])->name('vehicules.create');
+    Route::post('/vehicules', [VehiculeController::class, 'store'])->name('vehicules.store');
+    Route::get('/vehicules/{vehicule}/edit', [VehiculeController::class, 'edit'])->name('vehicules.edit');
+    Route::put('/vehicules/{vehicule}', [VehiculeController::class, 'update'])->name('vehicules.update');
+    Route::delete('/vehicules/{vehicule}', [VehiculeController::class, 'destroy'])->name('vehicules.destroy');
+
+    // Réservations utilisateur
+    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::get('/reservation/create', [ReservationController::class, 'create'])->name('reservation.create');
+    Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
+
+    // Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Redirection après recherche
+    Route::post('/voiture2', [VehiculeController::class, 'recuperer'])->name('recapitulatif');
+    Route::get('/voiture2', [VehiculeController::class, 'recuperer'])->name('recapitulatif');
 });
 
-//  Redirection après connexion
-Route::get('/redirect-after-login', function () {
-    $user = Auth::user();
-    if ($user->role === 'particulier') {
-        return redirect()->route('ajout_voitures');
-    } elseif ($user->role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    }
-    return redirect()->route('dashboard');
-})->middleware('auth');
+// -------------------------
+// Routes Admin
+// -------------------------
+Route::middleware(['auth:admin', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
-//  Page ajout voiture
-Route::get('/01-ajout_voitures', fn() => view('01-ajout_voitures'))
-    ->name('ajout_voitures')
-    ->middleware('auth');
+    Route::get('/dashboard', [UtilisateurController::class, 'adminDashboard'])->name('dashboard');
 
-//  Tableau de bord admin
-Route::get('/admin', [UtilisateurController::class, 'adminDashboard'])
-    ->name('admin.dashboard')
-    ->middleware('auth');
+    // Gestion des utilisateurs
+    Route::resource('utilisateurs', UtilisateurController::class);
+
+    // Réservations admin
+    Route::get('/reservations', [ReservationController::class, 'adminIndex'])->name('reservations.index');
+    Route::patch('/reservations/{reservation}/validate', [ReservationController::class, 'validate'])->name('reservations.validate');
+    Route::patch('/reservations/{reservation}/reject', [ReservationController::class, 'reject'])->name('reservations.reject');
+
+    // Véhicules admin
+    Route::get('/vehicules', [VehiculeController::class, 'adminIndex'])->name('vehicules.index');
+    Route::patch('/vehicules/{vehicule}/approve', [VehiculeController::class, 'approve'])->name('vehicules.approve');
+    Route::patch('/vehicules/{vehicule}/reject', [VehiculeController::class, 'reject'])->name('vehicules.reject');
+
+    // Statistiques
+    Route::get('/statistiques', [UtilisateurController::class, 'statistics'])->name('statistiques');
+});
 
 require __DIR__.'/auth.php';
-
-//redirectionn apres recherche  
-Route::post('/voiture2',[VehiculeController::class,'recuperer'] )->name('recapitulatif');
-Route::get('/voiture2',[VehiculeController::class,'recuperer'] )->name('recapitulatif');
-
-
-

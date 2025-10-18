@@ -9,11 +9,28 @@ class Avis extends Model
 {
     use HasFactory;
 
-    protected $table = 'avis_vehicules'; // ta table
-    protected $fillable = ['vehicule_id', 'nom_utilisateur', 'note', 'commentaire'];
+    protected $table = 'avis';
 
+    protected $fillable = [
+        'utilisateur_id',
+        'vehicule_id',
+        'note',
+        'commentaire',
+    ];
+
+    /**
+     * Relation avec Utilisateur
+     */
+    public function utilisateur()
+    {
+        return $this->belongsTo(Utilisateur::class, 'utilisateur_id');
+    }
+
+    /**
+     * Relation avec Vehicule
+     */
     public function vehicule()
     {
-        return $this->belongsTo(Vehicule::class);
+        return $this->belongsTo(Vehicule::class, 'vehicule_id');
     }
 }

@@ -8,10 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { background-color: #f9f9f9; }
-        .vehicle-card { border-radius: 10px; overflow: hidden; border: 1px solid #ddd; transition: transform .2s; }
+        .vehicle-card { border-radius: 10px; overflow: hidden; border: 1px solid #ddd; transition: transform .2s; background-color: #fff; }
         .vehicle-card:hover { transform: scale(1.02); }
         .vehicle-image { width: 100%; height: 200px; object-fit: cover; }
         .btn-reserver { background-color: #007bff; color: white; font-weight: 600; }
+        .recap { background-color: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .recap .row > div { margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -32,26 +34,53 @@
 </nav>
 
 <!-- Résumé de la recherche -->
-<div class="container mt-4">
-    <div class="bg-white p-4 rounded shadow-sm">
+  <div class="container mt-4">
+    <div class="recap">
         <h5 class="mb-3">Récapitulatif de votre recherche</h5>
         <div class="row">
-            <div class="col-md-6"><strong>Lieu de départ :</strong> {{ request('lieuRecup', 'Non spécifié') }}</div>
-            <div class="col-md-6"><strong>Lieu de retour :</strong> {{ request('lieuRetour', 'Non spécifié') }}</div>
-            <div class="col-md-6"><strong>Date de départ :</strong> {{ request('dateDepart', 'Non spécifiée') }}</div>
-            <div class="col-md-6"><strong>Date de retour :</strong> {{ request('dateRetour', 'Non spécifiée') }}</div>
-            <div class="col-md-6"><strong>Âge du conducteur :</strong> {{ request('ageCheck', 'Non spécifié') }}</div>
-            <div class="col-md-6"><strong>Véhicules trouvés :</strong> {{ $vehicules->count() }}</div>
+            <div class="col-md-6">
+                <strong>Lieu de départ :</strong> 
+                {{ $searchData['lieuRecup'] ?? 'Non spécifié' }}
+            </div>
+            <div class="col-md-6">
+                <strong>Lieu de retour :</strong> 
+                {{ $searchData['lieuRetour'] ?? 'Non spécifié' }}
+            </div>
+            <div class="col-md-6">
+                <strong>Date de départ :</strong> 
+                @if(isset($searchData['dateDepart']))
+                    {{ \Carbon\Carbon::parse($searchData['dateDepart'])->format('d/m/Y') }}
+                    @if(isset($searchData['heureDepart']))
+                        à {{ $searchData['heureDepart'] }}
+                    @endif
+                @else
+                    Non spécifiée
+                @endif
+            </div>
+            <div class="col-md-6">
+                <strong>Date de retour :</strong> 
+                @if(isset($searchData['dateRetour']))
+                    {{ \Carbon\Carbon::parse($searchData['dateRetour'])->format('d/m/Y') }}
+                    @if(isset($searchData['heureRetour']))
+                        à {{ $searchData['heureRetour'] }}
+                    @endif
+                @else
+                    Non spécifiée
+                @endif
+            </div>
+            <div class="col-md-6">
+                <strong>Véhicules trouvés :</strong> {{ $vehicules->count() }}
+            </div>
+        </div>
+
+        <!-- Bouton Modifier la recherche -->
+        <div class="d-flex justify-content-center mt-3">
+            <a href="{{ route('dashboard') }}" class="btn btn-primary btn-lg px-5 shadow">
+                <i class="bi bi-search"></i> Modifier la recherche
+            </a>
         </div>
     </div>
-
-     <!-- Bouton Rechercher -->
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">
-                <i class="bi bi-search"></i> Modifier la rechercher
-            </button>
 </div>
-
 <!-- Liste des véhicules -->
 <div class="container mt-5">
     <div class="row">
@@ -59,7 +88,7 @@
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card vehicle-card">
                     <!-- Image -->
-                    <img src="{{ $vehicule->photo }}" 
+                    <img src="{{ $vehicule->photo ?? 'https://via.placeholder.com/400x200' }}" 
                          alt="{{ $vehicule->marque }}" class="vehicle-image">
 
                     <!-- Corps -->
@@ -67,8 +96,10 @@
                         <h5>{{ $vehicule->marque }} {{ $vehicule->modele }}</h5>
                         <p class="text-muted">{{ ucfirst($vehicule->type) }}</p>
 
-                        <!-- Note moyenne -->
-                        @php $noteMoyenne = $vehicule->avis->avg('note') ?? 0; @endphp
+                        <!-- Note moyenne sécurisée -->
+                        @php
+                            $noteMoyenne = optional($vehicule->avis)->avg('note') ?? 0;
+                        @endphp
                         <p><strong>Note moyenne :</strong> 
                             @if($noteMoyenne > 0)
                                 {{ number_format($noteMoyenne, 1) }}/5
@@ -79,76 +110,111 @@
 
                         <!-- Caractéristiques principales -->
                         <div class="vehicle-specs mb-3">
-                            <p><i class="fas fa-cog me-2"></i> marque: {{ $vehicule->marque}}</p>
-                            <p><i class="fas fa-snowflake me-2"></i> modele: {{ $vehicule->modele }}</p>
-                            <p><i class="fas fa-car me-2"></i> type: {{ $vehicule->type}}</p>
-                            <p><i class="fas fa-users me-2"></i> immatriculation: {{ $vehicule->immatriculation }}</p>
-                            <p><i class="fas fa-road me-2"></i> prix_jour: {{ $vehicule->prix_jour }} </p>
-                            <p><i class="fas fa-gas-pump me-2"></i>statut: {{ $vehicule->statut}}</p>
-                            <p><i class="fas fa-tachomerter-alt me-2"><i> carburant:{{$vehicule->carburant}}</i>
-                            <p><i class="fas fa-cogs me-2"></i>nbre_places: {{ $vehicule->nbre_places}}</p>
-                            <p><i class="fas fa-ruler-horizontal me-2"></i> localisation: {{ $vehicule->localisation}}</p>
-                            <p><i class="fas fa-calendar-alt me-2"></i> kilometrage: {{ $vehicule->kilometrage}}</p>
-                            <p>
-                            
-
-    
-                            @if(!empty($vehicule->features))
-                                @foreach($vehicule->features as $feature)
-                                    <p><i class="fas fa-check text-success me-2"></i> {{ $feature }}</p>
-                                @endforeach
-                            @endif
+                            <p><i class="fas fa-cog me-2"></i> Marque: {{ $vehicule->marque}}</p>
+                            <p><i class="fas fa-snowflake me-2"></i> Modèle: {{ $vehicule->modele }}</p>
+                            <p><i class="fas fa-car me-2"></i> Type: {{ $vehicule->type}}</p>
+                            <p><i class="fas fa-users me-2"></i> Immatriculation: {{ $vehicule->immatriculation }}</p>
+                            <p><i class="fas fa-road me-2"></i> Prix/jour: {{ $vehicule->prix_jour }} €</p>
+                            <p><i class="fas fa-gas-pump me-2"></i> Carburant: {{ $vehicule->carburant }}</p>
+                            <p><i class="fas fa-cogs me-2"></i> Nombre de places: {{ $vehicule->nbre_places}}</p>
+                            <p><i class="fas fa-ruler-horizontal me-2"></i> Localisation: {{ $vehicule->localisation}}</p>
+                            <p><i class="fas fa-calendar-alt me-2"></i> Kilométrage: {{ $vehicule->kilometrage}} km</p>
                         </div>
 
-                        <!-- Packs avec accordéon -->
                         @php
-                            $packs = is_string($vehicule->packs) ? json_decode($vehicule->packs, true) : $vehicule->packs;
+                            // Calculer le nombre de jours
+                            $dateDepart = $searchData['dateDepart'] ?? null;
+                            $dateRetour = $searchData['dateRetour'] ?? null;
+                            $nombreJours = 1;
+                            
+                            if ($dateDepart && $dateRetour) {
+                                $debut = \Carbon\Carbon::parse($dateDepart);
+                                $fin = \Carbon\Carbon::parse($dateRetour);
+                                $nombreJours = max(1, $debut->diffInDays($fin));
+                            }
+                            
+                            // Calcul des prix
+                            $prixJour = $vehicule->prix_jour;
+                            $prixStandard = $prixJour * $nombreJours;
+                            $prixPremium = $prixStandard * 1.20; // +20%
                         @endphp
-                            @if(!empty($vehicule->packs))
 
-    <div class="accordion" id="accordion{{ $vehicule->id }}">
-        @foreach($packs as $index => $pack)
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="heading{{ $vehicule->id }}{{ $index }}">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                            data-bs-target="#collapse{{ $vehicule->id }}{{ $index }}" 
-                            aria-expanded="false" aria-controls="collapse{{ $vehicule->id }}{{ $index }}">
-                        {{ $pack['name'] ?? 'Pack' }} - {{ $pack['price'] ?? '?' }}{{ $pack['currency'] ?? '€' }}
-                    </button>
-                </h2>
-                <div id="collapse{{ $vehicule->id }}{{ $index }}" class="accordion-collapse collapse" 
-                     aria-labelledby="heading{{ $vehicule->id }}{{ $index }}" data-bs-parent="#accordion{{ $vehicule->id }}">
-                    <div class="accordion-body">
-                        @if(!empty($pack['features']))
-                            <ul>
-                                @foreach($pack['features'] as $feature)
-                                    <li>{{ $feature }}</li>
-                                @endforeach
-                            </ul>
-                        @else
-                            <p class="text-muted">Aucune information sur ce pack</p>
-                        @endif
-                        <a href="{{ route('reservation', ['id' => $vehicule->id, 'pack' => $pack['name']]) }}" 
-                           class="btn btn-sm btn-reserver">Réserver</a>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div>
-@endif
+                        <!-- PACK STANDARD -->
+                        <div class="card mb-3 border-primary">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0"><i class="fas fa-box"></i> PACK STANDARD</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-3">
+                                    <li><i class="fas fa-check text-success"></i> Responsabilité civile</li>
+                                    <li><i class="fas fa-check text-success"></i> Assurance tous risques avec franchise</li>
+                                    <li><i class="fas fa-check text-success"></i> {{ number_format($nombreJours * 750) }} Kilomètres inclus</li>
+                                    <li><i class="fas fa-check text-success"></i> Annulation gratuite</li>
+                                </ul>
+                                
+                                <div class="text-center mb-3">
+                                    <p class="mb-1">
+                                        <span class="badge bg-info">{{ $nombreJours }} jour(s)</span>
+                                    </p>
+                                    <h4 class="text-primary mb-0">
+                                        {{ number_format($prixStandard, 2) }} €
+                                    </h4>
+                                    <small class="text-muted">({{ $prixJour }} €/jour)</small>
+                                </div>
+                                
+                                <a href="{{ route('reservation.create', ['vehicule_id' => $vehicule->id, 'pack' => 'standard', 'prix' => $prixStandard, 'nombre_jours' => $nombreJours]) }}" 
+                                   class="btn btn-primary w-100">
+                                    <i class="fas fa-calendar-check"></i> RÉSERVER
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- PACK PREMIUM -->
+                        <div class="card mb-3 border-warning">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0"><i class="fas fa-crown"></i> PACK PREMIUM</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-3">
+                                    <li><i class="fas fa-check text-success"></i> Responsabilité civile</li>
+                                    <li><i class="fas fa-check text-success"></i> Assurance tous risques</li>
+                                    <li><i class="fas fa-check text-success"></i> <strong>Remboursement des franchises avec Allianz</strong></li>
+                                    <li><i class="fas fa-check text-success"></i> {{ number_format($nombreJours * 1000) }} Kilomètres inclus</li>
+                                    <li><i class="fas fa-check text-success"></i> Annulation gratuite</li>
+                                    <li><i class="fas fa-check text-success"></i> GPS inclus</li>
+                                    <li><i class="fas fa-check text-success"></i> Conducteur additionnel gratuit</li>
+                                </ul>
+                                
+                                <div class="text-center mb-3">
+                                    <p class="mb-1">
+                                        <span class="badge bg-info">{{ $nombreJours }} jour(s)</span>
+                                        <span class="badge bg-success">+20%</span>
+                                    </p>
+                                    <h4 class="text-warning mb-0">
+                                        {{ number_format($prixPremium, 2) }} €
+                                    </h4>
+                                    <small class="text-muted">({{ number_format($prixPremium / $nombreJours, 2) }} €/jour)</small>
+                                </div>
+                                
+                                <a href="{{ route('reservation.create', ['vehicule_id' => $vehicule->id, 'pack' => 'premium', 'prix' => $prixPremium, 'nombre_jours' => $nombreJours]) }}" 
+                                   class="btn btn-warning w-100 text-dark">
+                                    <i class="fas fa-crown"></i> RÉSERVER
+                                </a>
+                            </div>
+                        </div>
 
                         <!-- Avis des clients -->
-                        <a href="{{ route('vehicules.show', $vehicule->id) }}" class="btn btn-outline-primary btn-sm">
-                            Voir détails + avis
+                        <a href="{{ route('vehicules.show', $vehicule->id) }}" class="btn btn-outline-primary btn-sm mt-2 w-100">
+                            <i class="fas fa-info-circle"></i> Voir détails + avis
                         </a>
 
                         <!-- Formulaire de notation -->
                         @auth
-                            <form action="{{ route('avis.store') }}" method="POST" class="mt-2">
+                            <form action="{{ route('avis.store') }}" method="POST" class="mt-3">
                                 @csrf
                                 <input type="hidden" name="vehicule_id" value="{{ $vehicule->id }}">
                                 <div class="d-flex align-items-center mb-2">
-                                    <label class="me-2">Votre note :</label>
+                                    <label class="me-2 small">Votre note :</label>
                                     <select name="note" class="form-select form-select-sm" style="width:auto;">
                                         @for($i=1; $i<=5; $i++)
                                             <option value="{{ $i }}">{{ $i }} ⭐</option>
@@ -158,7 +224,7 @@
                                 </div>
                             </form>
                         @else
-                            <p class="text-muted mt-2">Connectez-vous pour noter ce véhicule.</p>
+                            <p class="text-muted mt-2 small text-center">Connectez-vous pour noter ce véhicule.</p>
                         @endauth
 
                     </div>
@@ -173,7 +239,7 @@
 </div>
 
 <!-- Footer -->
-<footer class="bg-dark text-white mt-auto">
+<footer class="bg-dark text-white mt-5">
   <div class="container py-4">
     <div class="row">
       <div class="col-md-4 mb-4 mb-md-0">

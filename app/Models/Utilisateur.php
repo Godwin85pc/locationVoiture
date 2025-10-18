@@ -4,23 +4,49 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class Utilisateur extends Authenticatable
+class Utilisateur extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
 
     protected $table = 'utilisateurs';
 
     protected $fillable = [
-        'nom', 'prenom', 'email', 'mot_de_passe', 'telephone', 'role', 'date_creation'
+        'nom',
+        'prenom',
+        'email',
+        'password',
+        'telephone',
+        'role',
+        'date_creation',
     ];
 
     protected $hidden = [
-        'mot_de_passe', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
-    public function getAuthPassword()
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        return $this->mot_de_passe;
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+
+    public function vehicules()
+    {
+        return $this->hasMany(Vehicule::class, 'proprietaire_id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'client_id');
     }
 }
