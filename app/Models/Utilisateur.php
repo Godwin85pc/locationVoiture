@@ -2,21 +2,51 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class Utilisateur extends Model
+class Utilisateur extends Authenticatable implements MustVerifyEmail
 {
+    use Notifiable;
+
     protected $table = 'utilisateurs';
 
     protected $fillable = [
         'nom',
         'prenom',
         'email',
-        'mot_de_passe',
+        'password',
         'telephone',
         'role',
         'date_creation',
     ];
 
-    public $timestamps = false;
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+
+    public function vehicules()
+    {
+        return $this->hasMany(Vehicule::class, 'proprietaire_id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'client_id');
+    }
 }

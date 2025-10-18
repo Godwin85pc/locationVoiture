@@ -1,4 +1,3 @@
-vrai
 <!-- filepath: c:\Users\HP USERS\Desktop\3IL\I2FE\SEMESTRE1\INFORMATIQUE\WEB\PROJETS\locationVoiture\resources\views\index.blade.php -->
 <!DOCTYPE html>
 <html lang="fr">
@@ -70,9 +69,9 @@ vrai
         <span class="navbar-toggler-icon"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item" href="{{ url('connection') }}">Se connecter</a></li>
+        <li><a class="dropdown-item" href="{{ route('login') }}">Se connecter</a></li>
         <li><a class="dropdown-item" href="#">À propos</a></li>
-        <li><a class="dropdown-item" href="{{ url('01-ajout_voiture') }}">Louer ma voiture</a></li>
+        <li><a class="dropdown-item" href="{{ route('login') }}">Louer ma voiture</a></li>
       </ul>
     </div>
   </nav>
@@ -129,7 +128,6 @@ vrai
 
     <!-- Formulaire de recherche/location -->
 <!-- filepath: c:\Users\HP USERS\Desktop\3IL\I2FE\SEMESTRE1\INFORMATIQUE\WEB\PROJETS\locationVoiture\resources\views\index.blade.php -->
-<!-- ...existing code... -->
 <section id="formulaire-location" class="container d-flex justify-content-center mt-5">
     <div class="p-4 rounded bg-light w-100 shadow-lg border" style="max-width: 600px; background: rgba(255,255,255,0.95);">
         <h4 class="mb-4 text-center text-primary fw-bold">

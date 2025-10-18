@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+
 return new class extends Migration {
     public function up(): void
     {
@@ -16,6 +17,7 @@ return new class extends Migration {
             $table->string('telephone', 20)->nullable();
             $table->enum('role', ['admin', 'client', 'particulier'])->default('client');
             $table->timestamp('date_creation')->useCurrent();
+            $table->rememberToken();
         });
     }
 

@@ -150,11 +150,18 @@
             <label class="form-label"><i class="fa-solid fa-gas-pump"></i> Carburant</label>
             <select name="carburant" class="form-select" required>
               <option value="">-- Choisir --</option>
-              <option>Essence</option>
-              <option>Diesel</option>
-              <option>Hybride</option>
-              <option>Électrique</option>
+              <option value="Essence">Essence</option>
+              <option value="Diesel">Diesel</option>
+              <option value="Electrique">Électrique</option>
             </select>
+            <div class="invalid-feedback">Veuillez sélectionner un type de carburant.</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label"><i class="bi bi-people"></i> Nombre de places</label>
+            <input type="number" name="nbre_places" class="form-control" placeholder="Ex: 5">
           </div>
 
           <div class="col-md-6 mb-3">

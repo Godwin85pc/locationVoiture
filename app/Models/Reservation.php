@@ -18,6 +18,7 @@ class Reservation extends Model
         'date_reservation',
         'lieu_recuperation',
         'lieu_restitution',
+        'motif_rejet',
     ];
 
     public $timestamps = false;

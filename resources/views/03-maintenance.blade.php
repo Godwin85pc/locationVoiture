@@ -84,9 +84,9 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item" href="{{ route('connection') }}">Se connecter</a></li>
+        <li><a class="dropdown-item" href="{{ route('login') }}">Se connecter</a></li>
         <li><a class="dropdown-item" href="#">À propos</a></li>
-        <li><a class="dropdown-item" href="{{ route('01-ajout_voiture') }}">Louer ma voiture</a></li>
+        <li><a class="dropdown-item" href="{{ url('01-ajout_voiture') }}">Louer ma voiture</a></li>
       </ul>
     </div>
   </nav>
@@ -104,7 +104,7 @@
   <script>
     // Redirection selon le choix
     document.getElementById('ouiBtn').addEventListener('click', () => {
-      window.location.href = "{{ route('resume') }}"; // Page suivante si Oui
+      window.location.href = "{{ route('prix') }}"; // Page suivante si Oui
     });
   </script>
   <footer class="mt-5 bg-dark text-white">
