@@ -19,6 +19,7 @@ class VehiculeController extends Controller
 
     /**
      * Formulaire de création
+     * Formulaire de création
      */
     public function create()
     {
@@ -30,18 +31,19 @@ class VehiculeController extends Controller
      */
     public function store(Request $request)
     {
-
         $validated = $request->validate([
-            'proprietaire_id' => 'required',
+            'proprietaire_id' => 'required|exists:utilisateurs,id',
             'marque' => 'required|string|max:100',
             'modele' => 'required|string|max:100',
             'type' => 'required|in:SUV,Berline,Utilitaire,Citadine',
             'immatriculation' => 'required|string|max:50|unique:vehicules,immatriculation',
             'prix_jour' => 'nullable|numeric',
-            'statut' => 'required|in:disponible,reserve,en_location,maintenance',
+            'prix_jour' => 'nullable|numeric',
+            'statut' => 'required|in:disponible,reserve,en_location,en_attente',
             'carburant' => 'required|in:Essence,Diesel,Electrique',
             'nbre_places' => 'nullable|integer|min:1',
             'localisation' => 'nullable|string|max:255',
+            'photo' => 'nullable|image|max:2048',
             'photo' => 'nullable|image|max:2048',
             'kilometrage' => 'nullable|integer|min:0',
             'date_ajout' => 'required|date',
@@ -61,6 +63,7 @@ class VehiculeController extends Controller
     }
 
     /**
+     * Affiche un véhicule
      * Affiche un véhicule
      */
     public function show($id)
@@ -102,14 +105,27 @@ class VehiculeController extends Controller
             'type' => 'required|in:SUV,Berline,Utilitaire,Citadine',
             'immatriculation' => 'required|string|max:50|unique:vehicules,immatriculation,' . $id,
             'prix_jour' => 'nullable|numeric',
+            'prix_jour' => 'nullable|numeric',
             'statut' => 'required|in:disponible,reserve,en_location,maintenance',
             'carburant' => 'required|in:Essence,Diesel,Electrique',
             'nbre_places' => 'nullable|integer|min:1',
             'localisation' => 'nullable|string|max:255',
             'photo' => 'nullable|image|max:2048',
+            'photo' => 'nullable|image|max:2048',
             'kilometrage' => 'nullable|integer|min:0',
             'date_ajout' => 'required|date',
         ]);
+
+        // Si prix non renseigné, on le recalcule
+        if (empty($validated['prix_jour'])) {
+            $validated['prix_jour'] = $this->calculerPrixAutomatique($validated['type'], $validated['carburant']);
+        }
+
+        // Upload photo si nouvelle
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('vehicules', 'public');
+        }
+           
 
         // Si prix non renseigné, on le recalcule
         if (empty($validated['prix_jour'])) {

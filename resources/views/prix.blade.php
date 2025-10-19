@@ -129,8 +129,8 @@
             <input type="hidden" name="{{ $key }}" value="{{ $value }}">
           @endif
         @endforeach
-
-        <button type="submit" class="btn btn-custom w-100 mt-3">Confirmer et enregistrer</button>
+     <a href="{{ route('confirmation') }}" class="btn btn-custom w-100 mt-3">Confirmer et enregistrer</a>
+        
       </form>
 
     @else

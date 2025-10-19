@@ -24,6 +24,8 @@ class Vehicule extends Model
         'localisation',
         'photo',
         'kilometrage',
+        'proprietaire_id',
+        'disponible',
         'description',
         'motif_rejet'
     ];
@@ -40,5 +42,21 @@ class Vehicule extends Model
     public function getImageUrlAttribute()
     {
         return $this->photo ?? 'https://via.placeholder.com/400x200?text=Véhicule';
+    }
+
+    public function offres()
+    {
+        return $this->hasMany(OffreVehicule::class);
+    }
+
+    public function offresActives()
+    {
+        return $this->hasMany(OffreVehicule::class)->active();
+    }
+
+    // Accessor pour le prix par jour (utilise prix_jour)
+    public function getPrixParJourAttribute()
+    {
+        return $this->prix_jour;
     }
 }

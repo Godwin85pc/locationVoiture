@@ -118,7 +118,7 @@
         <option value="disponible" selected>Disponible</option>
         <option value="reserve">Réservé</option>
         <option value="en_location">En location</option>
-        <option value="maintenance">En maintenance</option>
+        <option value="maintenance">en_attente</option>
     </select>
  </div>
         <div class="row">

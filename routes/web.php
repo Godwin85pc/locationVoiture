@@ -10,6 +10,12 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\CommisionController;
 
+// Côté loueur
+
+// Côté admin
+Route::get('/admin/notification', [AdminController::class, 'notificationVehicule'])->name('admin.notification');
+Route::post('/admin/vehicule/valider/{id}', [AdminController::class, 'validerVehicule'])->name('admin.valider_vehicule');
+
 // Utilisateurs
 Route::resource('utilisateurs', UtilisateurController::class);
 
@@ -29,7 +35,11 @@ Route::post('/vehicules/prix', [VehiculeController::class, 'calculPrix'])->name(
 
 Route::put('/vehicules/{id}', [VehiculeController::class, 'update'])->name('vehicules.update');
 
-// Page d'accueil
+// Page d'accueiluse App\Models\OffreVehicule;
+use App\Http\Controllers\OffreVehiculeController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\OffreAgenceController;
+
 Route::get('/', function () {
     return view('index');
     })->name('index');
@@ -43,6 +53,9 @@ Route::get('/', function () {
 Route::get('/02-options_extras', function () {
     return view('02-options_extras');
 })->name('02-options_extras');
+Route::get('/confirmation', function () {
+    return view('confirmation');
+})->name('confirmation');
 Route::get('/03-maintenance', function () {
     return view('03-maintenance');
 })->name('03-maintenance');
@@ -74,30 +87,24 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/redirect-after-login', function () {
+    $user = Auth::user();
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } else {
+        return redirect()->route('dashboard'); // Tous les autres vont au dashboard
+    }
+})->middleware('auth');
 
+Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard')->middleware(['auth', 'admin']);
 
-// Routes Admin protégées
-Route::middleware(['auth:admin', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [UtilisateurController::class, 'adminDashboard'])->name('dashboard');
-    
-    // Gestion des utilisateurs
-    Route::resource('utilisateurs', UtilisateurController::class);
-    
-    // Gestion des réservations admin
-    Route::get('/reservations', [ReservationController::class, 'adminIndex'])->name('reservations.index');
-    Route::patch('/reservations/{reservation}/validate', [ReservationController::class, 'validate'])->name('reservations.validate');
-    Route::patch('/reservations/{reservation}/reject', [ReservationController::class, 'reject'])->name('reservations.reject');
-    
-    // Gestion des véhicules admin
-    Route::get('/vehicules', [VehiculeController::class, 'adminIndex'])->name('vehicules.index');
-    Route::patch('/vehicules/{vehicule}/approve', [VehiculeController::class, 'approve'])->name('vehicules.approve');
-    Route::patch('/vehicules/{vehicule}/reject', [VehiculeController::class, 'reject'])->name('vehicules.reject');
-    
-    // Statistiques
-    Route::get('/statistiques', [UtilisateurController::class, 'statistics'])->name('statistiques');
+// Routes pour la gestion des offres d'agence
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('offres', OffreAgenceController::class);
+    Route::patch('offres/{offre}/toggle-status', [OffreAgenceController::class, 'toggleStatus'])->name('offres.toggle-status');
 });
-
-require __DIR__.'/auth.php';
-
 Route::get('/resume', [VehiculeController::class, 'resume'])->name('resume');
 Route::get('/vehicule/resume', [VehiculeController::class, 'resume'])->name('prix');
+require __DIR__.'/auth.php';
+
+Route::get('/dashboard/offres-disponibles', [OffreVehiculeController::class, 'fetch'])->name('offres.disponibles');
