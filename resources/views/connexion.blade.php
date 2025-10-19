@@ -46,7 +46,7 @@
       <div id="formConnexion" style="display: none;">
         <h3 class="text-center mb-4" id="titreForm">Connexion</h3>
 
-        <form method="POST" action="{{ route('01-ajout_voiture') }}">
+  <form method="GET" action="{{ route('vehicules.create') }}">
           @csrf
           <div class="mb-3">
             <label for="email" class="form-label">Adresse e-mail</label>

@@ -20,44 +20,41 @@
       <h3 class="text-center mb-4 text-success">
         <i class="fa-solid fa-sliders"></i> Options supplémentaires
       </h3>
-      <form>
+      <form method="POST" action="{{ route('vehicules.step2') }}">
+        @csrf
         <div class="row">
           <div class="col-md-6 mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="gps">
+            <input type="checkbox" class="form-check-input" id="climatisation" name="climatisation" value="1">
+            <label class="form-check-label" for="climatisation"><i class="fa-solid fa-snowflake"></i> Climatisation</label>
+          </div>
+          <div class="col-md-6 mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="gps" name="gps" value="1">
             <label class="form-check-label" for="gps"><i class="fa-solid fa-map"></i> GPS</label>
           </div>
-          <div class="col-md-6 mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="siegebebe">
-            <label class="form-check-label" for="siegebebe"><i class="fa-solid fa-baby-carriage"></i> Siège bébé</label>
-          </div>
         </div>
 
         <div class="row">
           <div class="col-md-6 mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="coffre">
-            <label class="form-check-label" for="coffre"><i class="fa-solid fa-box"></i> Coffre de toit</label>
-          </div>
-          <div class="col-md-6 mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="portevelos">
-            <label class="form-check-label" for="portevelos"><i class="fa-solid fa-bicycle"></i> Porte-vélos</label>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6 mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="pneus">
-            <label class="form-check-label" for="pneus"><i class="fa-solid fa-snowflake"></i> Pneus neige</label>
-          </div>
-          <div class="col-md-6 mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="bluetooth">
+            <input type="checkbox" class="form-check-input" id="bluetooth" name="bluetooth" value="1">
             <label class="form-check-label" for="bluetooth"><i class="fa-solid fa-music"></i> Audio Bluetooth</label>
           </div>
+          <div class="col-md-6 mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="sieges_chauffants" name="sieges_chauffants" value="1">
+            <label class="form-check-label" for="sieges_chauffants"><i class="fa-solid fa-fire"></i> Sièges chauffants</label>
+          </div>
         </div>
 
-        <!-- BOUTON = LIEN -->
-        <a href="{{ url('03-maintenance') }}" class="btn btn-custom w-100">
+        <div class="row">
+          <div class="col-md-6 mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="toit_ouvrant" name="toit_ouvrant" value="1">
+            <label class="form-check-label" for="toit_ouvrant"><i class="fa-solid fa-sun"></i> Toit ouvrant</label>
+          </div>
+          <div class="col-md-6 mb-3 form-check"></div>
+        </div>
+
+        <button type="submit" class="btn btn-custom w-100">
           <i class="fa-solid fa-arrow-right"></i> Suivant
-        </a>
+        </button>
       </form>
     </div>
   </div>

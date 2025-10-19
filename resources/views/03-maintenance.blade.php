@@ -18,23 +18,23 @@
     <div class="card p-5 w-50 text-center">
       <h3 class="mb-4 text-success"><i class="fa-solid fa-screwdriver-wrench"></i> Entretien du véhicule</h3>
       <p>Veuillez confirmer si votre véhicule est <strong>bien entretenu</strong>.</p>
-      <button id="ouiBtn" class="btn btn-success w-100 mb-3">
-        <i class="fa-solid fa-check"></i> Oui
-      </button>
-      <button id="nonBtn" class="btn btn-danger w-100">
-        <i class="fa-solid fa-xmark"></i> Non
-      </button>
+      <form method="POST" action="{{ route('vehicules.step3') }}">
+        @csrf
+        <input type="hidden" name="entretien_confirme" value="1">
+        <button type="submit" class="btn btn-success w-100 mb-3">
+          <i class="fa-solid fa-check"></i> Oui
+        </button>
+      </form>
+      <form method="POST" action="{{ route('vehicules.step3') }}">
+        @csrf
+        <input type="hidden" name="entretien_confirme" value="0">
+        <button type="submit" class="btn btn-danger w-100">
+          <i class="fa-solid fa-xmark"></i> Non
+        </button>
+      </form>
     </div>
   </div>
 
-  <script>
-    document.getElementById('ouiBtn').addEventListener('click', () => {
-      window.location.href = "{{ route('04-pricing_info') }}"; // 🔹 route si oui
-    });
-
-    document.getElementById('nonBtn').addEventListener('click', () => {
-      window.location.href = "{{ route('04-pricing_info') }}"; // 🔹 route si non
-    });
-  </script>
+  <script></script>
 </body>
 </html>

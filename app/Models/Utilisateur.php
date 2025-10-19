@@ -40,6 +40,14 @@ class Utilisateur extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    /**
+     * Get the user's full name.
+     */
+    public function getNameAttribute()
+    {
+        return $this->prenom . ' ' . $this->nom;
+    }
+
     public function vehicules()
     {
         return $this->hasMany(Vehicule::class, 'proprietaire_id');
