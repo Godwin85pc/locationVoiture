@@ -19,6 +19,14 @@
 
     <h2 class="mb-4 text-primary fw-bold">Bienvenue, {{ Auth::user()->name }} !</h2>
 
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    {{-- LAYOUT AVEC SIDEBAR VERTICALE --}}
     <div class="row">
         {{-- SIDEBAR NAVIGATION VERTICALE --}}
         <div class="col-lg-3 col-md-4">
@@ -66,7 +74,7 @@
                         @forelse($vehiculesDisponibles as $vehicule)
                             <div class="col-lg-4 col-md-6">
                                 <div class="card shadow-sm h-100 border-0">
-                             <img src="{{ $vehicule->photo ?? 'https://via.placeholder.com/400x200?text=V%C3%A9hicule' }}" 
+                                    <img src="{{ $vehicule->photo ?? 'https://via.placeholder.com/400x200?text=V%C3%A9hicule' }}" 
                                          class="card-img-top img-fluid" 
                                          alt="Image véhicule"
                                          style="object-fit: cover; height: 200px; width: 100%;">
@@ -111,7 +119,7 @@
                         @forelse($mesVehicules as $vehicule)
                             <div class="col-lg-4 col-md-6">
                                 <div class="card shadow-sm h-100 border-0">
-                             <img src="{{ $vehicule->photo ?? 'https://via.placeholder.com/400x200?text=V%C3%A9hicule' }}" 
+                                    <img src="{{ $vehicule->photo ?? 'https://via.placeholder.com/400x200?text=V%C3%A9hicule' }}" 
                                          class="card-img-top img-fluid" 
                                          alt="Image véhicule"
                                          style="object-fit: cover; height: 200px; width: 100%;">

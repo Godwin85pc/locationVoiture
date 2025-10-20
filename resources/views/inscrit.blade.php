@@ -116,7 +116,7 @@
     <!-- Lien Se connecter avec redirection Laravel -->
     <p class="text-center mt-3 mb-0">
       vous avez déjà un compte ? 
-      <a href="{{ route('connection') }}">Se connecter</a>
+  <a href="{{ route('login') }}">Se connecter</a>
     </p>
   </div>
 

@@ -26,39 +26,23 @@ class AuthenticatedSessionController extends Controller
     {
         $request->validate([
             'email' => ['required', 'string', 'email'],
-            'mot_de_passe' => ['required', 'string'],
+            'password' => ['required', 'string'],
         ]);
-
-        // Debug : affiche les données reçues du formulaire
-        // dd($request->all());
-
-        // Vérifie si l'utilisateur existe
-        $user = \App\Models\Utilisateur::where('email', $request->email)->first();
-        if (!$user) {
-            dd('Email non trouvé');
-        }
-
-        // Vérifie si le mot de passe correspond
-        if (!Hash::check($request->mot_de_passe, $user->mot_de_passe)) {
-            dd('Mot de passe incorrect');
-        }
-
-        // Vérifie le provider utilisé par le guard
-        $providerModel = get_class(Auth::getProvider()->retrieveByCredentials(['email' => $request->email]));
-        if ($providerModel !== \App\Models\Utilisateur::class) {
-            dd('Provider utilisé : ' . $providerModel);
-        }
-
-        // Authentification Laravel
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->mot_de_passe], $request->boolean('remember'))) {
+        // Tentative d'authentification avec champ personnalisé password
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended('dashboard');
+
+            $user = Auth::user();
+            // Redirection selon le rôle
+            if ($user->role === 'admin') {
+                return redirect()->intended(route('admin.dashboard'));
+            }
+            return redirect()->intended(route('dashboard'));
         }
 
         return back()->withErrors([
-           'email' => 'Identifiants non corrects.',
-           'mot_de_passe' => 'Mot de passe non correct.',
-       ]);
+            'email' => 'Identifiants incorrects ou compte inexistant.',
+        ])->onlyInput('email');
     }
 
     /**

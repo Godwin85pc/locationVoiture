@@ -34,7 +34,7 @@ class RegisteredUserController extends Controller
             'nom' => ['required', 'string', 'max:100'],
             'prenom' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:150', 'unique:utilisateurs,email'],
-            'mot_de_passe' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'telephone' => ['nullable', 'string', 'max:20'],
             // 'role' => ['required', 'in:admin,client,particulier'], // Si tu veux choisir le rôle à l'inscription
         ]);
@@ -43,7 +43,7 @@ class RegisteredUserController extends Controller
             'nom' => $request->nom,
             'prenom' => $request->prenom,
             'email' => $request->email,
-            'mot_de_passe' => bcrypt($request->mot_de_passe),
+            'password' => Hash::make($request->password),
             'telephone' => $request->telephone,
             'role' => 'client', // ou $request->role si tu veux le choisir
         ]);

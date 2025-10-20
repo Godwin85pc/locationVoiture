@@ -25,7 +25,8 @@
         <i class="fa-solid fa-chart-line"></i> Fixer les prix dynamiques
       </h3>
 
-      <form id="priceForm" method="GET" action="{{ route('summary') }}">
+      <form id="priceForm" method="POST" action="{{ route('vehicules.step4') }}">
+        @csrf
         <div class="price-box">
           <label class="radio-label">
             <input type="radio" name="prixUnique" value="14"> 
@@ -71,8 +72,12 @@
         </div>
 
         <!-- Bouton de confirmation redirige via Laravel -->
+        <div class="mb-3">
+          <label class="form-label">Prix retenu (€)</label>
+          <input type="number" name="prix_par_jour" class="form-control" min="1" required>
+        </div>
         <button type="submit" class="btn btn-custom w-100 mt-3">
-          <i class="fa-solid fa-check"></i> Confirmer
+          <i class="fa-solid fa-check"></i> Enregistrer le prix et confirmer
         </button>
       </form>
     </div>
