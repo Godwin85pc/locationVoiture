@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
+use App\Models\Utilisateur;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -28,15 +29,24 @@ class AuthenticatedSessionController extends Controller
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ]);
-        // Tentative d'authentification avec champ personnalisé password
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->boolean('remember'))) {
-            $request->session()->regenerate();
+        // Récupérer l'utilisateur pour déterminer le rôle
+        $user = Utilisateur::where('email', $request->email)->first();
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return back()->withErrors([
+                'email' => 'Identifiants incorrects ou compte inexistant.',
+            ])->onlyInput('email');
+        }
 
-            $user = Auth::user();
-            // Redirection selon le rôle
-            if ($user->role === 'admin') {
-                return redirect()->intended(route('admin.dashboard'));
-            }
+        // Si admin, on utilise le guard 'admin' uniquement (pas le guard web)
+        if ($user->role === 'admin') {
+            Auth::guard('admin')->login($user, $request->boolean('remember'));
+            $request->session()->regenerate();
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        // Sinon, utilisateur "classique" via le guard web
+        if (Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password], $request->boolean('remember'))) {
+            $request->session()->regenerate();
             return redirect()->intended(route('dashboard'));
         }
 

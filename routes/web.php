@@ -157,9 +157,9 @@ Route::get('/redirect-after-login', function () {
 // -------------------------
 // Routes Admin
 // -------------------------
-Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard')->middleware(['auth', 'admin']);
+Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard')->middleware(['auth:admin', 'admin']);
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth:admin', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Notifications et validation véhicules
     Route::get('/notification', [AdminController::class, 'notificationVehicule'])->name('notification');
     Route::post('/vehicule/valider/{id}', [AdminController::class, 'validerVehicule'])->name('valider_vehicule');
