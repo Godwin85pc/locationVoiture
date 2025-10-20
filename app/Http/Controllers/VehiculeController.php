@@ -116,10 +116,7 @@ class VehiculeController extends Controller
             'date_ajout' => 'required|date',
         ]);
 
-        // Si prix non renseigné, on le recalcule
-        if (empty($validated['prix_jour'])) {
-            $validated['prix_jour'] = $this->calculerPrixAutomatique($validated['type'], $validated['carburant']);
-        }
+        
 
         // Upload photo si nouvelle
         if ($request->hasFile('photo')) {

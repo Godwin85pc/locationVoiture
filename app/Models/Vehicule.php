@@ -54,7 +54,7 @@ class Vehicule extends Model
         return $this->hasMany(OffreVehicule::class)->active();
     }
 
-    // Accessor pour le prix par jour (utilise prix_jour)
+    // Accessor pour le prix par jour 
     public function getPrixParJourAttribute()
     {
         return $this->prix_jour;
