@@ -70,59 +70,24 @@
       <div class="card-body text-center">
         <h5>Nom du véhicule : Toyota</h5>
         <p>Immatriculation : AB-123-CD</p>
-        <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
-           <!-- Bouton Modifie0r les infos -->
-          <a href="{{ url('1-ajout_voiture') }}" class="btn btn-outline-primary">Modifier les infos</a>
+        <div class="d-flex flex-wrap gap-2">
+          <!-- Bouton Modifie0r les infos -->
+          <a href="{{ route('vehicules.create') }}" class="btn btn-outline-primary">Modifier les infos</a>
           <!-- Autres boutons restent inchangés -->
           <button class="btn btn-outline-success">Ajouter des photos</button>
           <button class="btn btn-outline-warning">Mettre à jour calendrier</button>
-          <!-- Bouton Valider l’annonce -->
-          <a href="{{ url('connection') }}" class="btn btn-outline-danger">Valider l’annonce</a>
-        </div>
+          <!-- Validation de l’annonce -->
+          @auth
+            <form action="{{ route('vehicules.step5') }}" method="POST" class="d-inline">
+              @csrf
+                <button type="submit" class="btn btn-outline-success">Valider l’annonce</button>
+            </form>
+          @else
+            <a href="{{ route('login') }}" class="btn btn-outline-danger">Se connecter pour valider</a>
+          @endauth
         </div>
       </div>
     </div>
   </div>
-  <footer class="mt-5 bg-dark text-white">
-  <div class="container py-5">
-    <div class="row">
-      <div class="col-md-4 mb-4 mb-md-0">
-        <h5>LocationVoiture</h5>
-        <p>Le meilleur choix pour votre location de véhicule.</p>
-      </div>
-      <div class="col-md-4 mb-4 mb-md-0">
-        <h5>Contact</h5>
-        <p>123 Avenue de Paris, France</p>
-        <p>+33 1 23 45 67 89</p>
-        <p>info@locationvoiture.fr</p>
-      </div>
-      <div class="col-md-4">
-        <h5>Newsletter</h5>
-        <div class="input-group">
-          <input type="email" class="form-control" placeholder="Votre email">
-          <button class="btn btn-primary">S'abonner</button>
-        </div>
-      </div>
-    </div>
-    <hr class="bg-light">
-    <div class="text-center">&copy; 2025 LocationVoiture. Tous droits réservés.</div>
-  </div>
-</footer>
-
-<!-- Modal détails -->
-<div class="modal fade" id="vehicleDetailsModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Détails du véhicule</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body" id="vehicleDetailsContent"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-      </div>
-    </div>
-  </div>
-</div>
 </body>
 </html>

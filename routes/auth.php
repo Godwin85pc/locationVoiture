@@ -36,5 +36,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
 
+// Admin-specific logout that logs out only the admin guard
+Route::middleware('auth:admin')->post('admin/logout', function() {
+    \Illuminate\Support\Facades\Auth::guard('admin')->logout();
+    // Do not invalidate the entire session so the normal user stays logged in
+    return redirect('/');
+})->name('admin.logout');
+
 
 

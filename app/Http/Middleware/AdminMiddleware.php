@@ -16,13 +16,13 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Vérifier si l'utilisateur est connecté
-        if (!Auth::check()) {
+        // Vérifier si l'utilisateur est connecté via le guard 'admin'
+        if (!Auth::guard('admin')->check()) {
             return redirect()->route('login')->with('error', 'Vous devez être connecté pour accéder à cette page.');
         }
 
         // Vérifier si l'utilisateur a le rôle admin
-        if (Auth::user()->role !== 'admin') {
+        if (Auth::guard('admin')->user()->role !== 'admin') {
             abort(403, 'Accès refusé. Vous devez être administrateur pour accéder à cette page.');
         }
 

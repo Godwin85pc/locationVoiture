@@ -1,212 +1,391 @@
 @extends('layouts.app')
 
+@section('title', 'Gestion des Véhicules')
+
 @section('content')
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-primary">
-            <i class="fas fa-car"></i> Gestion des Véhicules
-        </h1>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Retour au dashboard
-        </a>
-    </div>
-
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    <!-- Statistiques rapides -->
-    <div class="row mb-4">
-        <div class="col-md-2-4">
-            <div class="card bg-primary text-white">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-car"></i> Gestion des Véhicules
+                    </h4>
+                    <div>
+                        <span class="badge badge-warning">{{ $vehiculesEnAttente->count() }} en attente</span>
+                        <span class="badge badge-success">{{ $vehiculesValides->count() }} validés</span>
+                        <span class="badge badge-danger">{{ $vehiculesRejetes->count() }} rejetés</span>
+                    </div>
+                </div>
+                
                 <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title">Total</h6>
-                            <h3>{{ $stats['total'] }}</h3>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-car fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2-4">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title">En attente</h6>
-                            <h3>{{ $stats['en_attente'] }}</h3>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-clock fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2-4">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title">Disponibles</h6>
-                            <h3>{{ $stats['disponibles'] }}</h3>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-check fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2-4">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title">Loués</h6>
-                            <h3>{{ $stats['loues'] }}</h3>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-key fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2-4">
-            <div class="card bg-danger text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title">Rejetés</h6>
-                            <h3>{{ $stats['rejetes'] }}</h3>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-times fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                    <!-- Filtres -->
+                    <ul class="nav nav-tabs mb-4" id="vehiculesTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="en-attente-tab" data-bs-toggle="tab" data-bs-target="#en-attente" type="button" role="tab">
+                                <i class="fas fa-clock text-warning"></i> En attente ({{ $vehiculesEnAttente->count() }})
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="valides-tab" data-bs-toggle="tab" data-bs-target="#valides" type="button" role="tab">
+                                <i class="fas fa-check-circle text-success"></i> Validés ({{ $vehiculesValides->count() }})
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="rejetes-tab" data-bs-toggle="tab" data-bs-target="#rejetes" type="button" role="tab">
+                                <i class="fas fa-times-circle text-danger"></i> Rejetés ({{ $vehiculesRejetes->count() }})
+                            </button>
+                        </li>
+                    </ul>
 
-    <!-- Filtres par statut -->
-    <ul class="nav nav-tabs mb-3" id="vehiculeTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="tous-tab" data-bs-toggle="tab" data-bs-target="#tous" type="button" role="tab">
-                Tous ({{ $stats['total'] }})
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="attente-tab" data-bs-toggle="tab" data-bs-target="#attente" type="button" role="tab">
-                En attente ({{ $stats['en_attente'] }})
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="disponibles-tab" data-bs-toggle="tab" data-bs-target="#disponibles" type="button" role="tab">
-                Disponibles ({{ $stats['disponibles'] }})
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="loues-tab" data-bs-toggle="tab" data-bs-target="#loues" type="button" role="tab">
-                Loués ({{ $stats['loues'] }})
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="rejetes-tab" data-bs-toggle="tab" data-bs-target="#rejetes" type="button" role="tab">
-                Rejetés ({{ $stats['rejetes'] }})
-            </button>
-        </li>
-    </ul>
+                    <div class="tab-content" id="vehiculesTabsContent">
+                        <!-- Véhicules en attente -->
+                        <div class="tab-pane fade show active" id="en-attente" role="tabpanel">
+                            @if($vehiculesEnAttente->isEmpty())
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> Aucun véhicule en attente de validation.
+                                </div>
+                            @else
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>Véhicule</th>
+                                                <th>Propriétaire</th>
+                                                <th>Type</th>
+                                                <th>Prix/jour</th>
+                                                <th>Date d'ajout</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($vehiculesEnAttente as $vehicule)
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        @if($vehicule->photo)
+                                                            <img src="{{ asset('storage/' . $vehicule->photo) }}" alt="Photo" class="rounded me-2" width="50" height="40" style="object-fit: cover;">
+                                                        @else
+                                                            <div class="bg-secondary rounded me-2 d-flex align-items-center justify-content-center" style="width: 50px; height: 40px;">
+                                                                <i class="fas fa-car text-white"></i>
+                                                            </div>
+                                                        @endif
+                                                        <div>
+                                                            <strong>{{ $vehicule->marque }} {{ $vehicule->modele }}</strong><br>
+                                                            <small class="text-muted">{{ $vehicule->annee }} - {{ $vehicule->numero_plaque ?? $vehicule->immatriculation }}</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    {{ $vehicule->proprietaire->nom ?? 'N/A' }}<br>
+                                                    <small class="text-muted">{{ $vehicule->proprietaire->email ?? 'N/A' }}</small>
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-secondary">{{ ucfirst($vehicule->type) }}</span>
+                                                </td>
+                                                <td>
+                                                    <strong>{{ number_format($vehicule->prix_par_jour ?? $vehicule->prix_jour, 0, ',', ' ') }} €</strong>
+                                                </td>
+                                                <td>
+                                                    {{ $vehicule->date_ajout ? $vehicule->date_ajout->format('d/m/Y H:i') : $vehicule->created_at->format('d/m/Y H:i') }}
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal{{ $vehicule->id }}">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-success" onclick="validerVehicule({{ $vehicule->id }})">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejetModal{{ $vehicule->id }}">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
 
-    <div class="tab-content" id="vehiculeTabsContent">
-        <!-- Tous les véhicules -->
-        <div class="tab-pane fade show active" id="tous" role="tabpanel">
-            @include('admin.vehicules.table', ['vehicules_list' => $vehicules])
-        </div>
-        
-        <!-- En attente -->
-        <div class="tab-pane fade" id="attente" role="tabpanel">
-            @include('admin.vehicules.table', ['vehicules_list' => $vehicules->where('statut', 'en_attente')])
-        </div>
-        
-        <!-- Disponibles -->
-        <div class="tab-pane fade" id="disponibles" role="tabpanel">
-            @include('admin.vehicules.table', ['vehicules_list' => $vehicules->where('statut', 'disponible')])
-        </div>
-        
-        <!-- Loués -->
-        <div class="tab-pane fade" id="loues" role="tabpanel">
-            @include('admin.vehicules.table', ['vehicules_list' => $vehicules->where('statut', 'loue')])
-        </div>
-        
-        <!-- Rejetés -->
-        <div class="tab-pane fade" id="rejetes" role="tabpanel">
-            @include('admin.vehicules.table', ['vehicules_list' => $vehicules->where('statut', 'rejete')])
-        </div>
-    </div>
-</div>
+                                            <!-- Modal Détails -->
+                                            <div class="modal fade" id="detailModal{{ $vehicule->id }}" tabindex="-1">
+                                                <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Détails - {{ $vehicule->marque }} {{ $vehicule->modele }}</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    @if($vehicule->photo)
+                                                                        <img src="{{ asset('storage/' . $vehicule->photo) }}" alt="Photo" class="img-fluid rounded mb-3">
+                                                                    @endif
+                                                                    
+                                                                    <table class="table table-sm">
+                                                                        <tr><th width="40%">Marque :</th><td>{{ $vehicule->marque }}</td></tr>
+                                                                        <tr><th>Modèle :</th><td>{{ $vehicule->modele }}</td></tr>
+                                                                        <tr><th>Année :</th><td>{{ $vehicule->annee }}</td></tr>
+                                                                        <tr><th>Type :</th><td>{{ $vehicule->type }}</td></tr>
+                                                                        <tr><th>Couleur :</th><td>{{ $vehicule->couleur }}</td></tr>
+                                                                        <tr><th>Immatriculation :</th><td>{{ $vehicule->numero_plaque ?? $vehicule->immatriculation }}</td></tr>
+                                                                    </table>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <table class="table table-sm">
+                                                                        <tr><th width="40%">Carburant :</th><td>{{ $vehicule->carburant }}</td></tr>
+                                                                        <tr><th>Transmission :</th><td>{{ $vehicule->transmission }}</td></tr>
+                                                                        <tr><th>Places :</th><td>{{ $vehicule->nombre_places ?? $vehicule->nbre_places }}</td></tr>
+                                                                        <tr><th>Kilométrage :</th><td>{{ number_format($vehicule->kilometrage) }} km</td></tr>
+                                                                        <tr><th>Localisation :</th><td>{{ $vehicule->localisation }}</td></tr>
+                                                                        <tr><th>Prix/jour :</th><td><strong>{{ number_format($vehicule->prix_par_jour ?? $vehicule->prix_jour, 0, ',', ' ') }} €</strong></td></tr>
+                                                                    </table>
+                                                                    
+                                                                    @if($vehicule->description)
+                                                                        <div class="mt-3">
+                                                                            <strong>Description :</strong>
+                                                                            <p class="mt-2">{{ $vehicule->description }}</p>
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                            <button type="button" class="btn btn-success" onclick="validerVehicule({{ $vehicule->id }})">
+                                                                <i class="fas fa-check"></i> Valider
+                                                            </button>
+                                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejetModal{{ $vehicule->id }}">
+                                                                <i class="fas fa-times"></i> Rejeter
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-<!-- Modal de rejet -->
-<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="rejectModalLabel">Rejeter le véhicule</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="rejectForm" method="POST">
-                @csrf
-                @method('PATCH')
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="motif_rejet" class="form-label">Motif du rejet (optionnel)</label>
-                        <textarea class="form-control" id="motif_rejet" name="motif_rejet" rows="3" placeholder="Expliquez la raison du rejet..."></textarea>
+                                            <!-- Modal Rejet -->
+                                            <div class="modal fade" id="rejetModal{{ $vehicule->id }}" tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Rejeter le véhicule</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <form action="{{ route('admin.vehicules.reject', $vehicule) }}" method="POST">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <div class="modal-body">
+                                                                <p>Vous êtes sur le point de rejeter le véhicule <strong>{{ $vehicule->marque }} {{ $vehicule->modele }}</strong>.</p>
+                                                                <div class="form-group">
+                                                                    <label for="motif_rejet">Motif du rejet :</label>
+                                                                    <textarea name="motif_rejet" id="motif_rejet" class="form-control" rows="3" required 
+                                                                              placeholder="Expliquez la raison du rejet..."></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                                <button type="submit" class="btn btn-danger">
+                                                                    <i class="fas fa-times"></i> Rejeter
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Véhicules validés -->
+                        <div class="tab-pane fade" id="valides" role="tabpanel">
+                            @if($vehiculesValides->isEmpty())
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> Aucun véhicule validé.
+                                </div>
+                            @else
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>Véhicule</th>
+                                                <th>Propriétaire</th>
+                                                <th>Type</th>
+                                                <th>Prix/jour</th>
+                                                <th>Date validation</th>
+                                                <th>Réservations</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($vehiculesValides as $vehicule)
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        @if($vehicule->photo)
+                                                            <img src="{{ asset('storage/' . $vehicule->photo) }}" alt="Photo" class="rounded me-2" width="50" height="40" style="object-fit: cover;">
+                                                        @else
+                                                            <div class="bg-secondary rounded me-2 d-flex align-items-center justify-content-center" style="width: 50px; height: 40px;">
+                                                                <i class="fas fa-car text-white"></i>
+                                                            </div>
+                                                        @endif
+                                                        <div>
+                                                            <strong>{{ $vehicule->marque }} {{ $vehicule->modele }}</strong><br>
+                                                            <small class="text-muted">{{ $vehicule->annee }} - {{ $vehicule->numero_plaque ?? $vehicule->immatriculation }}</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    {{ $vehicule->proprietaire->nom ?? 'N/A' }}<br>
+                                                    <small class="text-muted">{{ $vehicule->proprietaire->email ?? 'N/A' }}</small>
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-secondary">{{ ucfirst($vehicule->type) }}</span>
+                                                </td>
+                                                <td>
+                                                    <strong>{{ number_format($vehicule->prix_par_jour ?? $vehicule->prix_jour, 0, ',', ' ') }} €</strong>
+                                                </td>
+                                                <td>
+                                                    {{ $vehicule->updated_at->format('d/m/Y H:i') }}
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-info">{{ $vehicule->reservations->count() }}</span>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal{{ $vehicule->id }}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Véhicules rejetés -->
+                        <div class="tab-pane fade" id="rejetes" role="tabpanel">
+                            @if($vehiculesRejetes->isEmpty())
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> Aucun véhicule rejeté.
+                                </div>
+                            @else
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>Véhicule</th>
+                                                <th>Propriétaire</th>
+                                                <th>Type</th>
+                                                <th>Motif du rejet</th>
+                                                <th>Date rejet</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($vehiculesRejetes as $vehicule)
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        @if($vehicule->photo)
+                                                            <img src="{{ asset('storage/' . $vehicule->photo) }}" alt="Photo" class="rounded me-2" width="50" height="40" style="object-fit: cover;">
+                                                        @else
+                                                            <div class="bg-secondary rounded me-2 d-flex align-items-center justify-content-center" style="width: 50px; height: 40px;">
+                                                                <i class="fas fa-car text-white"></i>
+                                                            </div>
+                                                        @endif
+                                                        <div>
+                                                            <strong>{{ $vehicule->marque }} {{ $vehicule->modele }}</strong><br>
+                                                            <small class="text-muted">{{ $vehicule->annee }} - {{ $vehicule->numero_plaque ?? $vehicule->immatriculation }}</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    {{ $vehicule->proprietaire->nom ?? 'N/A' }}<br>
+                                                    <small class="text-muted">{{ $vehicule->proprietaire->email ?? 'N/A' }}</small>
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-secondary">{{ ucfirst($vehicule->type) }}</span>
+                                                </td>
+                                                <td>
+                                                    <small class="text-danger">{{ $vehicule->motif_rejet ?? 'Aucun motif spécifié' }}</small>
+                                                </td>
+                                                <td>
+                                                    {{ $vehicule->updated_at->format('d/m/Y H:i') }}
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal{{ $vehicule->id }}">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-warning" onclick="remettreEnAttente({{ $vehicule->id }})">
+                                                            <i class="fas fa-undo"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-danger">Rejeter</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-function showRejectModal(vehiculeId) {
-    const form = document.getElementById('rejectForm');
-    form.action = `/admin/vehicules/${vehiculeId}/reject`;
-    const modal = new bootstrap.Modal(document.getElementById('rejectModal'));
-    modal.show();
+function validerVehicule(vehiculeId) {
+    if (confirm('Êtes-vous sûr de vouloir valider ce véhicule ?')) {
+        fetch(`/admin/vehicules/${vehiculeId}/approve`, {
+            method: 'PATCH',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erreur lors de la validation');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la validation');
+        });
+    }
+}
+
+function remettreEnAttente(vehiculeId) {
+    if (confirm('Êtes-vous sûr de vouloir remettre ce véhicule en attente ?')) {
+        fetch(`/admin/vehicules/${vehiculeId}/resume`, {
+            method: 'PATCH',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erreur lors de la remise en attente');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la remise en attente');
+        });
+    }
 }
 </script>
-
-<style>
-.card {
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.col-md-2-4 {
-    flex: 0 0 20%;
-    max-width: 20%;
-}
-
-.table th {
-    background-color: #f8f9fa;
-    border-top: none;
-}
-
-.btn-action {
-    margin: 0 2px;
-}
-</style>
 @endsection

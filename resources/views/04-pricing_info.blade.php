@@ -99,10 +99,13 @@
           et incluons les frais d’assurance. Nous déduisons <b>10% de frais de service</b>. 
           Vous êtes indemnisé pour les frais supplémentaires (carburant manquant, pénalités...).
         </p>
-        <form action="{{ route('05-set_prices') }}">
+        
+        <!-- Soumettre les informations de prix à l'étape 4 -->
+        <form action="{{ route('vehicules.step4') }}" method="POST">
+          @csrf
           <div class="mb-3">
             <label class="form-label">Prix par jour (€)</label>
-            <input type="number" class="form-control" placeholder="Ex: 30">
+            <input type="number" class="form-control" name="prix_par_jour" placeholder="Ex: 30" min="1" required>
           </div>
           <button type="submit" class="btn btn-custom w-100">Fixer les prix de location</button>
         </form>

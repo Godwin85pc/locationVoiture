@@ -16,7 +16,6 @@
       display: flex;
       flex-direction: column;
     }
-
     main {
       flex: 1;
       display: flex;
@@ -24,43 +23,34 @@
       align-items: center;
       padding: 40px 0;
     }
-
     .card {
       border-radius: 20px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.2);
       max-width: 800px;
       width: 100%;
     }
-
     .form-control, .form-select {
       border-radius: 10px;
-      font-family: 'Arial', Helvetica, sans-serif;
       font-size: 16px;
     }
-
     .btn-custom {
       background: #6aa0e5;
       color: white;
       border-radius: 30px;
-      font-family: 'Arial', Helvetica, sans-serif;
       font-size: 16px;
     }
-
     .btn-custom:hover {
       background: #4f86d1;
     }
-
     label i {
       color: #6aa0e5;
       margin-right: 5px;
     }
-
     footer {
       background-color: #212529;
       color: white;
       margin-top: auto;
     }
-
     .navbar-toggler {
       border: none;
     }
@@ -70,6 +60,7 @@
       height: 2rem;
     }
   </style>
+  @php($errors = $errors ?? session('errors'))
 </head>
 <body>
 
@@ -94,88 +85,71 @@
       <h3 class="text-center mb-4 text-primary">
         <i class="fa-solid fa-car-side"></i> Informations du véhicule
       </h3>
-
-      <!-- ✅ Formulaire sécurisé -->
+@if($errors && $errors->any())
+        <div class="alert alert-danger">
+          <ul class="mb-0">
+            @foreach($errors->all() as $error)
+              <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+        </div>
+      @endif
       <form action="{{ route('vehicules.store')}}" method="POST" enctype="multipart/form-data">
         @csrf
-
         <input type="hidden" name="proprietaire_id" value="6">
+
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-building"></i> Marque</label>
             <input type="text" name="marque" class="form-control" placeholder="Ex: Toyota" required>
           </div>
-
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-car"></i> Modèle</label>
             <input type="text" name="modele" class="form-control" placeholder="Ex: Corolla" required>
           </div>
         </div>
-        
- <div class="mb-3">
-    <label for="form-label">Statut du véhicule :</label>
-    <select name="statut" id="statut" class="form-control" required>
-        <option value="disponible" selected>Disponible</option>
-        <option value="reserve">Réservé</option>
-        <option value="en_location">En location</option>
-        <option value="maintenance">en_attente</option>
-    </select>
- </div>
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label"><i class="fa-solid fa-euro-sign"></i> Prix journalier (€)</label>
-            <input type="number" name="prix_jour" class="form-control" placeholder="Ex: 45" step="0.01" required>
-          </div>
 
+        <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-calendar-plus"></i> Date d’ajout</label>
             <input type="date" name="date_ajout" class="form-control" value="{{ date('Y-m-d') }}" required>
           </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label"><i class="fa-solid fa-hashtag"></i> Immatriculation</label>
+            <input type="text" name="numero_plaque" class="form-control" placeholder="Ex: AB-123-CD" required>
+          </div>
         </div>
 
         <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label"><i class="fa-solid fa-hashtag"></i> Immatriculation</label>
-            <input type="text" name="immatriculation" class="form-control" placeholder="Ex: AB-123-CD" required>
-          </div>
-
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-location-dot"></i> Localisation</label>
             <input type="text" name="localisation" class="form-control" placeholder="Ex: Douala, Bonamoussadi" required>
           </div>
-        </div>
-
-        <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-gas-pump"></i> Carburant</label>
             <select name="carburant" class="form-select" required>
               <option value="">-- Choisir --</option>
-              <option value="Essence">Essence</option>
-              <option value="Diesel">Diesel</option>
-              <option value="Electrique">Électrique</option>
+              <option value="essence">Essence</option>
+              <option value="diesel">Diesel</option>
+              <option value="electrique">Électrique</option>
+              <option value="hybride">Hybride</option>
+             
             </select>
-            <div class="invalid-feedback">Veuillez sélectionner un type de carburant.</div>
           </div>
         </div>
 
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="bi bi-people"></i> Nombre de places</label>
-            <input type="number" name="nbre_places" class="form-control" placeholder="Ex: 5">
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label class="form-label"><i class="fa-solid fa-users"></i> Nombre de places</label>
             <input type="number" name="nbre_places" class="form-control" placeholder="Ex: 5" required>
           </div>
-        </div>
-
-        <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-gauge-high"></i> Kilométrage</label>
             <input type="number" name="kilometrage" class="form-control" placeholder="Ex: 50000" required>
           </div>
+        </div>
 
+        <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-car"></i> Type</label>
             <select name="type" class="form-select" required>
@@ -186,20 +160,15 @@
               <option value="Citadine">Citadine</option>
             </select>
           </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-12 mb-3">
+          <div class="col-md-6 mb-3">
             <label class="form-label"><i class="fa-solid fa-image"></i> Photo du véhicule</label>
-            <input type="file" name="photo" class="form-control" accept="image/*" >
+            <input type="file" name="photo" class="form-control" accept="image/*">
             <small class="text-muted">Formats acceptés : JPG, PNG, JPEG</small>
           </div>
         </div>
 
-        
-
         <button type="submit" class="btn btn-custom w-100">
-          <i clagroupss="fa-solid fa-arrow-right"></i> Suivant
+          <i class="fa-solid fa-arrow-right"></i> Suivant
         </button>
       </form>
     </div>
@@ -217,21 +186,4 @@
           <h5>Contact</h5>
           <p>123 Avenue de Paris, France</p>
           <p>+33 1 23 45 67 89</p>
-          <p>info@locationvoiture.fr</p>
-        </div>
-        <div class="col-md-4">
-          <h5>Newsletter</h5>
-          <div class="input-group">
-            <input type="email" class="form-control" placeholder="Votre email">
-            <button class="btn btn-primary">S'abonner</button>
-          </div>
-        </div>
-      </div>
-      <hr class="bg-light">
-      <div class="text-center">&copy; 2025 LocationVoiture. Tous droits réservés.</div>
-    </div>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+          <p>info@locationvoiture

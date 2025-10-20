@@ -8,30 +8,29 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Vehicule;
 
 class VehiculeValideMail extends Mailable
 {
     use Queueable, SerializesModels;
- public $vehicule;
+
+    public $vehicule;
+
     /**
      * Create a new message instance.
      */
     public function __construct(Vehicule $vehicule)
     {
-         $this->vehicule = $vehicule;
+        $this->vehicule = $vehicule;
     }
-    public function build()
-    {
-        return $this->subject('Votre véhicule est validé !')
-                    ->view('emails.vehicule_valide');
-    }
+
     /**
      * Get the message envelope.
      */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Vehicule Valide Mail',
+            subject: 'Votre véhicule a été validé !',
         );
     }
 
@@ -41,7 +40,10 @@ class VehiculeValideMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.vehicule_valide',
+            with: [
+                'vehicule' => $this->vehicule,
+            ],
         );
     }
 
@@ -54,10 +56,4 @@ class VehiculeValideMail extends Mailable
     {
         return [];
     }
-
-   
-
-
-
-   
 }

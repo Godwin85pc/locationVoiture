@@ -39,7 +39,8 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-
+        // Separate guard for administrators so an admin and a normal
+        // user can be logged in concurrently in the same browser
         'admin' => [
             'driver' => 'session',
             'provider' => 'users',

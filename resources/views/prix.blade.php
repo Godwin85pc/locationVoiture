@@ -71,7 +71,7 @@
       @endif
 
       <div class="prix-box">
-        <h4>Prix par jour : {{ number_format($vehicule['prix_jour'], 0, ',', ' ') }} FCFA</h4>
+        <h4>Prix par jour : {{ number_format($vehicule['prix_jour'], 0, ',', ' ') }} FC</h4>
         <small>Prix calculé automatiquement selon le type et le carburant.</small>
       </div>
 

@@ -165,11 +165,11 @@
         </div>
       </form>
 
-      <p class="text-center mt-3 mb-0">
-        vous avez déjà un compte ? 
-        <a href="{{ url('connection') }}">Se connecter</a>
-      </p>
-    </div>
+    <!-- Lien Se connecter avec redirection Laravel -->
+    <p class="text-center mt-3 mb-0">
+      vous avez déjà un compte ? 
+  <a href="{{ route('login') }}">Se connecter</a>
+    </p>
   </div>
 
   <!-- Footer -->

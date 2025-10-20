@@ -16,8 +16,29 @@ class UtilisateurController extends Controller
      */
     public function index()
     {
-        $utilisateurs = Utilisateur::orderBy('created_at', 'desc')->get();
-        return view('admin.utilisateurs.index', compact('utilisateurs'));
+        // Récupère tous les utilisateurs depuis la base de données
+        $utilisateurs = Utilisateur::all();
+
+        // Retourne la vue 'utilisateurs.index' avec la liste des utilisateurs
+        return view('utilisateurs.index', compact('utilisateurs'));
+    }
+
+    /**
+     * Display admin view of all users with statistics.
+     */
+    public function adminIndex()
+    {
+        $utilisateurs = Utilisateur::with(['reservations'])->get();
+        
+        $stats = [
+            'total' => $utilisateurs->count(),
+            'clients' => $utilisateurs->where('role', 'client')->count(),
+            'particuliers' => $utilisateurs->where('role', 'particulier')->count(),
+            'admins' => $utilisateurs->where('role', 'admin')->count(),
+            'actifs_ce_mois' => $utilisateurs->where('created_at', '>=', now()->startOfMonth())->count()
+        ];
+
+        return view('admin.utilisateurs.index', compact('utilisateurs', 'stats'));
     }
 
     /**
@@ -119,48 +140,54 @@ class UtilisateurController extends Controller
     }
 
     /**
-     * Display the admin dashboard.
+     * Display the admin dashboard with enhanced statistics.
      */
     public function adminDashboard()
     {
-        $utilisateurs = Utilisateur::orderBy('created_at', 'desc')->get();
-        return view('admin.dashboard', compact('utilisateurs'));
+        $utilisateurs = Utilisateur::with(['reservations'])->get();
+        $clients = Utilisateur::where('role', 'client')->get();
+        $particuliers = Utilisateur::where('role', 'particulier')->get();
+        $admins = Utilisateur::where('role', 'admin')->get();
+        
+        // Statistiques des véhicules
+        $vehicules = Vehicule::all();
+        $vehiculesDisponibles = Vehicule::where('statut', 'disponible')->count();
+        $vehiculesLoues = Vehicule::where('statut', 'loue')->count();
+        
+        // Statistiques des réservations
+        $reservations = Reservation::all();
+        $reservationsEnAttente = Reservation::where('statut', 'en_attente')->count();
+        $reservationsConfirmees = Reservation::where('statut', 'confirmee')->count();
+        $revenuTotal = Reservation::where('statut', 'confirmee')->sum('montant_total');
+        
+        // Statistiques générales
+        $stats = [
+            'total_utilisateurs' => $utilisateurs->count(),
+            'total_clients' => $clients->count(),
+            'total_particuliers' => $particuliers->count(),
+            'total_admins' => $admins->count(),
+            'total_vehicules' => $vehicules->count(),
+            'vehicules_disponibles' => $vehiculesDisponibles,
+            'vehicules_loues' => $vehiculesLoues,
+            'total_reservations' => $reservations->count(),
+            'reservations_en_attente' => $reservationsEnAttente,
+            'reservations_confirmees' => $reservationsConfirmees,
+            'revenu_total' => $revenuTotal,
+        ];
+
+        return view('admin.dashboard', compact('utilisateurs', 'clients', 'particuliers', 'admins', 'vehicules', 'stats'));
     }
 
     /**
-     * Display statistics page.
+     * Toggle user status (activate/deactivate).
      */
-    public function statistics()
+    public function toggleStatus($id)
     {
-        $stats = [
-            'utilisateurs' => [
-                'total' => Utilisateur::count(),
-                'clients' => Utilisateur::where('role', 'client')->count(),
-                'particuliers' => Utilisateur::where('role', 'particulier')->count(),
-                'admins' => Utilisateur::where('role', 'admin')->count(),
-                'nouveaux_ce_mois' => Utilisateur::whereMonth('created_at', now()->month)->count(),
-            ],
-            'vehicules' => [
-                'total' => Vehicule::count(),
-                'disponibles' => Vehicule::where('statut', 'disponible')->count(),
-                'en_location' => Vehicule::where('statut', 'loue')->count(),
-                'en_attente' => Vehicule::where('statut', 'en_attente')->count(),
-            ],
-            'reservations' => [
-                'total' => Reservation::count(),
-                'confirmees' => Reservation::where('statut', 'confirmee')->count(),
-                'en_attente' => Reservation::where('statut', 'en_attente')->count(),
-                'annulees' => Reservation::where('statut', 'annulee')->count(),
-                'ce_mois' => Reservation::whereMonth('date_reservation', now()->month)->count(),
-            ],
-            'finances' => [
-                'revenus_total' => Reservation::where('statut', 'confirmee')->sum('montant_total'),
-                'revenus_ce_mois' => Reservation::where('statut', 'confirmee')
-                    ->whereMonth('date_reservation', now()->month)->sum('montant_total'),
-                'revenus_moyenne' => Reservation::where('statut', 'confirmee')->avg('montant_total'),
-            ]
-        ];
+        $utilisateur = Utilisateur::findOrFail($id);
+        $utilisateur->is_active = !$utilisateur->is_active;
+        $utilisateur->save();
 
-        return view('admin.statistiques', compact('stats'));
+        $status = $utilisateur->is_active ? 'activé' : 'désactivé';
+        return redirect()->back()->with('success', "Utilisateur {$status} avec succès.");
     }
 }

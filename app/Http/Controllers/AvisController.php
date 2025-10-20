@@ -5,33 +5,50 @@ namespace App\Http\Controllers;
 use App\Models\Avis;
 use App\Models\Vehicule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AvisController extends Controller
 {
-    // Afficher les détails d'un véhicule + ses avis
-    public function show($id)
+    /**
+     * Store a new avis/review
+     */
+    public function store(Request $request)
     {
-        // Charge les avis associés
-        $vehicule = Vehicule::with('avis')->findOrFail($id);
-        return view('vehicule_details', compact('vehicule'));
-    }
-
-    // Stocker un nouvel avis
-    public function storeAvis(Request $request, $vehiculeId)
-    {
-        $request->validate([
-            'nom_utilisateur' => 'required|string|max:255',
+        // Validation
+        $validated = $request->validate([
+            'vehicule_id' => 'required|exists:vehicules,id',
             'note' => 'required|integer|min:1|max:5',
-            'commentaire' => 'required|string|max:1000',
+            'commentaire' => 'nullable|string|max:500',
         ]);
 
+        // Vérifier si l'utilisateur est connecté
+        if (!Auth::check()) {
+            return redirect()->back()->with('error', 'Vous devez être connecté pour noter un véhicule.');
+        }
+
+        // Vérifier si l'utilisateur a déjà noté ce véhicule
+        $existingAvis = Avis::where('utilisateur_id', Auth::id())
+            ->where('vehicule_id', $validated['vehicule_id'])
+            ->first();
+
+        if ($existingAvis) {
+            // Mettre à jour l'avis existant
+            $existingAvis->update([
+                'note' => $validated['note'],
+                'commentaire' => $request->input('commentaire'), // Utiliser $request->input()
+            ]);
+
+            return redirect()->back()->with('success', 'Votre note a été mise à jour avec succès !');
+        }
+
+        // Créer un nouvel avis - CORRECTION ICI
         Avis::create([
-            'vehicule_id' => $vehiculeId,
-            'nom_utilisateur' => $request->nom_utilisateur,
-            'note' => $request->note,
-            'commentaire' => $request->commentaire,
+            'utilisateur_id' => Auth::id(),
+            'vehicule_id' => $validated['vehicule_id'],
+            'note' => $validated['note'],
+            'commentaire' => $request->input('commentaire'), // Utiliser $request->input() au lieu de $validated
         ]);
 
-        return redirect()->back()->with('success', 'Avis publié !');
+        return redirect()->back()->with('success', 'Merci pour votre note !');
     }
 }

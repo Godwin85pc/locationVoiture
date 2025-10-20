@@ -106,6 +106,9 @@
     document.getElementById('ouiBtn').addEventListener('click', () => {
       window.location.href = "{{ route('prix') }}"; // Page suivante si Oui
     });
+    document.getElementById('nonBtn').addEventListener('click', () => {
+      window.location.href = "{{ route('louable') }}"; // Page suivante si Oui
+    });
   </script>
   <footer class="mt-5 bg-dark text-white">
   <div class="container py-5">

@@ -7,7 +7,8 @@
     <title>Location de véhicules - Accueil</title>
     <!-- Bootstrap CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-   
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
         .navbar-toggler {
       border: none;
@@ -127,119 +128,88 @@
     </section>
 
     <!-- Formulaire de recherche/location -->
-<!-- filepath: c:\Users\HP USERS\Desktop\3IL\I2FE\SEMESTRE1\INFORMATIQUE\WEB\PROJETS\locationVoiture\resources\views\index.blade.php -->
-<section id="formulaire-location" class="container d-flex justify-content-center mt-5">
-    <div class="p-4 rounded bg-light w-100 shadow-lg border" style="max-width: 600px; background: rgba(255,255,255,0.95);">
-        <h4 class="mb-4 text-center text-primary fw-bold">
-            <i class="bi bi-calendar-check"></i> Réservez votre véhicule
-        </h4>
-        <!-- Lieu de récupération -->
-        <div class="mb-4">
-            <label class="form-label fw-semibold" for="lieuRecup">
-                <i class="bi bi-geo-alt-fill text-primary"></i> Lieu de récupération du véhicule :
-            </label>
-            <input type="text" class="form-control form-control-lg" id="lieuRecup" placeholder="Entrez le lieu de récupération" />
-        </div>
-        <!-- Heure de sollicitation -->
-        <div class="mb-4">
-            <label class="form-label fw-semibold">
-                <i class="bi bi-clock-history text-primary"></i> Sollicitation du véhicule :
-            </label>
-            <div class="row g-2">
-                <div class="col">
-                    <input type="date" class="form-control" id="dateDepart" />
-                </div>
-                <div class="col">
-                    <input type="time" class="form-control" id="heureDepart" />
+    <section id="formulaire-location" class="container d-flex justify-content-center mt-5">
+        <div class="p-4 rounded bg-light w-100 shadow-lg border" style="max-width: 600px; background: rgba(255,255,255,0.95);">
+            <h4 class="mb-4 text-center text-primary fw-bold">
+                <i class="bi bi-calendar-check"></i> Réservez votre véhicule
+            </h4>
+            <!-- Lieu de récupération -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold" for="lieuRecup">
+                    <i class="bi bi-geo-alt-fill text-primary"></i> Lieu de récupération du véhicule :
+                </label>
+                <input type="text" class="form-control form-control-lg" id="lieuRecup" placeholder="Entrez le lieu de récupération" />
+            </div>
+            <!-- Heure de sollicitation -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-clock-history text-primary"></i> Sollicitation du véhicule :
+                </label>
+                <div class="row g-2">
+                    <div class="col">
+                        <input type="date" class="form-control" id="dateDepart" />
+                    </div>
+                    <div class="col">
+                        <input type="time" class="form-control" id="heureDepart" />
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- Lieu de retour -->
-        <div class="mb-4">
-            <label class="form-label fw-semibold" for="lieuRetour">
-                <i class="bi bi-geo-alt text-primary"></i> Lieu de retour du véhicule :
-            </label>
-            <input type="text" class="form-control form-control-lg" id="lieuRetour" placeholder="Entrez le lieu de retour" />
-        </div>
-        <!-- Retour du véhicule -->
-        <div class="mb-4">
-            <label class="form-label fw-semibold">
-                <i class="bi bi-arrow-repeat text-primary"></i> Retour du véhicule :
-            </label>
-            <div class="row g-2">
-                <div class="col">
-                    <input type="date" class="form-control" id="dateRetour" />
-                </div>
-                <div class="col">
-                    <input type="time" class="form-control" id="heureRetour" />
+            <!-- Lieu de retour -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold" for="lieuRetour">
+                    <i class="bi bi-geo-alt text-primary"></i> Lieu de retour du véhicule :
+                </label>
+                <input type="text" class="form-control form-control-lg" id="lieuRetour" placeholder="Entrez le lieu de retour" />
+            </div>
+            <!-- Retour du véhicule -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-arrow-repeat text-primary"></i> Retour du véhicule :
+                </label>
+                <div class="row g-2">
+                    <div class="col">
+                        <input type="date" class="form-control" id="dateRetour" />
+                    </div>
+                    <div class="col">
+                        <input type="time" class="form-control" id="heureRetour" />
+                    </div>
                 </div>
             </div>
+            <!-- Checkbox -->
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="ageCheck" />
+                <label class="form-check-label fw-semibold" for="ageCheck">
+                    <i class="bi bi-person-badge text-primary"></i> Conducteur entre 25 et 30 ans
+                </label>
+            </div>
+            <!-- Lien client fidèle -->
+            <p class="mb-3 text-center">
+                <a href="#" class="text-decoration-underline text-success fw-semibold">Êtes-vous client fidèle ?</a>
+            </p>
+            <!-- Bouton Rechercher -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary btn-lg px-5 shadow">
+                    <i class="bi bi-search"></i> Rechercher
+                </button>
+            </div>
         </div>
-        <!-- Checkbox -->
-        <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" id="ageCheck" />
-            <label class="form-check-label fw-semibold" for="ageCheck">
-                <i class="bi bi-person-badge text-primary"></i> Conducteur entre 25 et 30 ans
-            </label>
-        </div>
-        <!-- Lien client fidèle -->
-        <p class="mb-3 text-center">
-            <a href="#" class="text-decoration-underline text-success fw-semibold">Êtes-vous client fidèle ?</a>
-        </p>
-        <!-- Bouton Rechercher -->
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">
-                <i class="bi bi-search"></i> Rechercher
-            </button>
-        </div>
-    </div>
-</section>
-<!-- ...existing code... -->
-<!-- Ajoute l'icône Bootstrap Icons CDN dans le <head> -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    </section>
 
-    <!-- Footer noir -->
-<footer class="mt-5 bg-dark text-white">
-  <div class="container py-5">
-    <div class="row">
-      <div class="col-md-4 mb-4 mb-md-0">
-        <h5>LocationVoiture</h5>
-        <p>Le meilleur choix pour votre location de véhicule.</p>
-      </div>
-      <div class="col-md-4 mb-4 mb-md-0">
-        <h5>Contact</h5>
-        <p>123 Avenue de Paris, France</p>
-        <p>+33 1 23 45 67 89</p>
-        <p>info@locationvoiture.fr</p>
-      </div>
-      <div class="col-md-4">
-        <h5>Newsletter</h5>
-        <div class="input-group">
-          <input type="email" class="form-control" placeholder="Votre email">
-          <button class="btn btn-primary">S'abonner</button>
+    <footer class="bg-dark text-white py-3 mt-5">
+        <div class="container d-flex justify-content-between align-items-start flex-wrap" style="gap: 1rem">
+            <!-- Infos à gauche -->
+            <div class="pe-3">
+                <p class="mb-1"><strong>AutoLocation+</strong></p>
+                <p class="mb-1">123 Rue de la Location</p>
+                <p class="mb-0">Ville, Pays</p>
+            </div>
+            <!-- Infos à droite -->
+            <div class="text-end ps-3">
+                <p class="mb-1"><strong>Tél :</strong> +33 6 12 34 56 78</p>
+                <p class="mb-0"><strong>Email :</strong> contact@autolocation.com</p>
+            </div>
         </div>
-      </div>
-    </div>
-    <hr class="bg-light">
-    <div class="text-center">&copy; 2025 LocationVoiture. Tous droits réservés.</div>
-  </div>
-</footer>
-
-<!-- Modal détails -->
-<div class="modal fade" id="vehicleDetailsModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Détails du véhicule</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body" id="vehicleDetailsContent"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-      </div>
-    </div>
-  </div>
-</div>
+    </footer>
     <!-- Bootstrap JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
