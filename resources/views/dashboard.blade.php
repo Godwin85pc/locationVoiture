@@ -2,9 +2,23 @@
 
 @section('content')
 <div class="container-fluid py-4">
+    {{-- SweetAlert2 --}}
+    @if(session('success'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Réservation enregistrée !',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+    @endif
+
     <h2 class="mb-4 text-primary fw-bold">Bienvenue, {{ Auth::user()->name }} !</h2>
 
-    {{-- LAYOUT AVEC SIDEBAR VERTICALE --}}
     <div class="row">
         {{-- SIDEBAR NAVIGATION VERTICALE --}}
         <div class="col-lg-3 col-md-4">
@@ -199,7 +213,7 @@
         </div>
     </div>
 
-    {{-- FILTRE & RESERVATION (Maintenant en bas) --}}
+    {{-- FORMULAIRE DE RESERVATION --}}
     <section id="formulaire-location" class="mt-5">
         <div class="p-4 rounded bg-light w-100 shadow-lg border mx-auto" style="max-width: 600px; background: rgba(255,255,255,0.95);">
             <h4 class="mb-4 text-center text-primary fw-bold">
@@ -226,10 +240,10 @@
                     </label>
                     <div class="row g-2">
                         <div class="col">
-                            <input type="date" class="form-control" name="date_debut" />
+                            <input type="date" class="form-control" name="dateDepart" required />
                         </div>
                         <div class="col">
-                            <input type="time" class="form-control" name="heure_debut" />
+                            <input type="time" class="form-control" name="heureDepart" required />
                         </div>
                     </div>
                 </div>
@@ -249,15 +263,15 @@
                     </label>
                     <div class="row g-2">
                         <div class="col">
-                            <input type="date" class="form-control" name="date_fin" />
+                            <input type="date" class="form-control" name="dateRetour" required />
                         </div>
                         <div class="col">
-                            <input type="time" class="form-control" name="heure_fin" />
+                            <input type="time" class="form-control" name="heureRetour" required />
                         </div>
                     </div>
                 </div>
                 <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="ageCheck" name="age_check" />
+                    <input class="form-check-input" type="checkbox" id="ageCheck" name="ageCheck" />
                     <label class="form-check-label fw-semibold" for="ageCheck">
                         <i class="bi bi-person-badge text-primary"></i> Conducteur entre 25 et 30 ans
                     </label>
