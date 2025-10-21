@@ -28,17 +28,70 @@ class UtilisateurController extends Controller
      */
     public function adminIndex()
     {
-        $utilisateurs = Utilisateur::with(['reservations'])->get();
+        $utilisateurs = Utilisateur::withCount(['reservations', 'vehicules'])
+            ->latest()
+            ->paginate(25);
         
         $stats = [
-            'total' => $utilisateurs->count(),
-            'clients' => $utilisateurs->where('role', 'client')->count(),
-            'particuliers' => $utilisateurs->where('role', 'particulier')->count(),
-            'admins' => $utilisateurs->where('role', 'admin')->count(),
-            'actifs_ce_mois' => $utilisateurs->where('created_at', '>=', now()->startOfMonth())->count()
+            'total' => Utilisateur::count(),
+            'clients' => Utilisateur::where('role', 'client')->count(),
+            'particuliers' => Utilisateur::where('role', 'particulier')->count(),
+            'admins' => Utilisateur::where('role', 'admin')->count(),
+            'actifs_ce_mois' => Utilisateur::where('created_at', '>=', now()->startOfMonth())->count()
         ];
 
         return view('admin.utilisateurs.index', compact('utilisateurs', 'stats'));
+    }
+
+    /**
+     * Display admin detail page for a user.
+     */
+    public function adminShow(Utilisateur $utilisateur)
+    {
+        $utilisateur->loadCount(['vehicules', 'reservations']);
+        $utilisateur->load(['vehicules' => function($q){ $q->latest()->take(5); }, 'reservations' => function($q){ $q->latest()->take(5); }]);
+        return view('admin.utilisateurs.show', compact('utilisateur'));
+    }
+
+    /**
+     * Show admin edit form for user.
+     */
+    public function adminEdit(Utilisateur $utilisateur)
+    {
+        return view('admin.utilisateurs.edit', compact('utilisateur'));
+    }
+
+    /**
+     * Update user from admin.
+     */
+    public function adminUpdate(Request $request, Utilisateur $utilisateur)
+    {
+        $validated = $request->validate([
+            'nom' => 'required|string|max:100',
+            'prenom' => 'required|string|max:100',
+            'email' => 'required|email|unique:utilisateurs,email,' . $utilisateur->id,
+            'telephone' => 'nullable|string|max:20',
+            'role' => 'required|in:admin,client,particulier',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        if (!empty($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
+        }
+
+        $utilisateur->update($validated);
+        return redirect()->route('admin.utilisateurs.index')->with('success', 'Utilisateur mis à jour.');
+    }
+
+    /**
+     * Destroy user from admin.
+     */
+    public function adminDestroy(Utilisateur $utilisateur)
+    {
+        $utilisateur->delete();
+        return redirect()->route('admin.utilisateurs.index')->with('success', 'Utilisateur supprimé.');
     }
 
     /**

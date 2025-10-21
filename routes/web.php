@@ -160,6 +160,8 @@ Route::get('/redirect-after-login', function () {
 Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard')->middleware(['auth:admin', 'admin']);
 
 Route::middleware(['auth:admin', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Aperçu du dashboard utilisateur (lecture seule) pour les admins
+    Route::get('/preview/user-dashboard', [DashboardController::class, 'adminPreview'])->name('preview.user-dashboard');
     // Notifications et validation véhicules
     Route::get('/notification', [AdminController::class, 'notificationVehicule'])->name('notification');
     Route::post('/vehicule/valider/{id}', [AdminController::class, 'validerVehicule'])->name('valider_vehicule');
@@ -175,6 +177,10 @@ Route::middleware(['auth:admin', 'admin'])->prefix('admin')->name('admin.')->gro
     
     // Utilisateurs (admin)
     Route::get('/utilisateurs', [UtilisateurController::class, 'adminIndex'])->name('utilisateurs.index');
+    Route::get('/utilisateurs/{utilisateur}', [UtilisateurController::class, 'adminShow'])->name('utilisateurs.show');
+    Route::get('/utilisateurs/{utilisateur}/edit', [UtilisateurController::class, 'adminEdit'])->name('utilisateurs.edit');
+    Route::patch('/utilisateurs/{utilisateur}', [UtilisateurController::class, 'adminUpdate'])->name('utilisateurs.update');
+    Route::delete('/utilisateurs/{utilisateur}', [UtilisateurController::class, 'adminDestroy'])->name('utilisateurs.destroy');
     Route::patch('/utilisateurs/{utilisateur}/toggle-status', [UtilisateurController::class, 'toggleStatus'])->name('utilisateurs.toggle-status');
     
     // Véhicules (admin)

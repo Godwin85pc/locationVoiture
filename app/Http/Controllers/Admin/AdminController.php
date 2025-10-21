@@ -37,9 +37,10 @@ class AdminController extends Controller
             ->toArray();
 
         // Derniers utilisateurs inscrits
-        $derniers_utilisateurs = Utilisateur::latest()
-            ->take(5)
-            ->get();
+        $derniers_utilisateurs = Utilisateur::latest()->take(5)->get();
+
+        // Liste complète paginée pour l'onglet Utilisateurs
+        $utilisateurs = Utilisateur::latest()->paginate(25);
 
         // Véhicules en attente de validation
         $vehicules_en_attente = Vehicule::where('statut', 'en_attente')
@@ -64,6 +65,7 @@ class AdminController extends Controller
             'stats',
             'utilisateurs_par_role',
             'derniers_utilisateurs',
+            'utilisateurs',
             'vehicules_en_attente',
             'dernieres_reservations',
             'vehicules_par_statut'
@@ -110,7 +112,8 @@ class AdminController extends Controller
             ->latest()
             ->get();
 
-        return view('admin.notification', compact('vehicules'));
+        // Afficher la vue notifications/vehicules (vue existante dans resources/views/admin/notifications/vehicules.blade.php)
+        return view('admin.notifications.vehicules', compact('vehicules'));
     }
 
     /**

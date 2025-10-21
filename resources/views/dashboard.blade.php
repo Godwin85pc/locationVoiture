@@ -2,7 +2,24 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    <h2 class="mb-4 text-primary fw-bold">Bienvenue, {{ Auth::user()->name }} !</h2>
+    <h2 class="mb-4 text-primary fw-bold">
+        Bienvenue,
+        @if(!empty($isAdminPreview))
+            {{ optional(Auth::guard('admin')->user())->prenom }} {{ optional(Auth::guard('admin')->user())->nom }} (aperçu admin)
+        @else
+            {{ Auth::user()->name }}
+        @endif
+        !
+    </h2>
+
+    @if (!empty($isAdminPreview))
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <i class="bi bi-eye me-2"></i>
+            <div>
+                Mode aperçu admin: vous visualisez le dashboard comme un utilisateur. Certaines actions peuvent être désactivées.
+            </div>
+        </div>
+    @endif
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>

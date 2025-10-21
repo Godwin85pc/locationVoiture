@@ -22,6 +22,12 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
 });
 
+// Routes d'authentification ADMIN - accessibles même si un utilisateur "web" est connecté
+Route::middleware('guest:admin')->group(function () {
+    Route::get('admin/login', [AuthenticatedSessionController::class, 'createAdmin'])->name('admin.login');
+    Route::post('admin/login', [AuthenticatedSessionController::class, 'storeAdmin'])->name('admin.login.store');
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)->name('verification.notice');
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)

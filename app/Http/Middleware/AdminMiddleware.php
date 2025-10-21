@@ -18,7 +18,7 @@ class AdminMiddleware
     {
         // Vérifier si l'utilisateur est connecté via le guard 'admin'
         if (!Auth::guard('admin')->check()) {
-            return redirect()->route('login')->with('error', 'Vous devez être connecté pour accéder à cette page.');
+            return redirect()->route('admin.login')->with('error', 'Veuillez vous connecter en tant qu\'administrateur.');
         }
 
         // Vérifier si l'utilisateur a le rôle admin

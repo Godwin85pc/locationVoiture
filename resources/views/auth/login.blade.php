@@ -119,7 +119,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('login') }}" class="fade-in delay-2">
+                    <form method="POST" action="{{ isset($isAdmin) && $isAdmin ? route('admin.login.store') : route('login') }}" class="fade-in delay-2">
                         @csrf
 
                         <!-- Email Address -->

@@ -8,10 +8,10 @@
             <h2 class="text-danger fw-bold mb-1">
                 <i class="bi bi-shield-check me-2"></i>Administration
             </h2>
-            <p class="text-muted mb-0">Tableau de bord administrateur - {{ Auth::user()->prenom }} {{ Auth::user()->nom }}</p>
+            <p class="text-muted mb-0">Tableau de bord administrateur - {{ optional(Auth::guard('admin')->user())->prenom }} {{ optional(Auth::guard('admin')->user())->nom }}</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('admin.preview.user-dashboard') }}" class="btn btn-outline-secondary">
                 <i class="bi bi-speedometer2 me-2"></i>Dashboard Utilisateur
             </a>
             <span class="badge bg-danger fs-6 px-3 py-2">
@@ -170,19 +170,19 @@
                                         <i class="bi bi-person-plus text-success me-2"></i>Nouveaux utilisateurs
                                     </h5>
                                     <div class="list-group list-group-flush">
-                                        @forelse($derniers_utilisateurs ?? [] as $user)
+                                        @forelse($derniers_utilisateurs ?? [] as $u)
                                             <div class="list-group-item d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    <strong>{{ $user->prenom }} {{ $user->nom }}</strong>
+                                                    <strong>{{ optional($u)->prenom }} {{ optional($u)->nom }}</strong>
                                                     <br>
-                                                    <small class="text-muted">{{ $user->email }}</small>
+                                                    <small class="text-muted">{{ optional($u)->email }}</small>
                                                 </div>
                                                 <div class="text-end">
-                                                    <span class="badge bg-{{ $user->role === 'admin' ? 'danger' : ($user->role === 'client' ? 'primary' : 'success') }}">
-                                                        {{ ucfirst($user->role) }}
+                                                    <span class="badge bg-{{ (optional($u)->role) === 'admin' ? 'danger' : ((optional($u)->role) === 'client' ? 'primary' : 'success') }}">
+                                                        {{ ucfirst(optional($u)->role) }}
                                                     </span>
                                                     <br>
-                                                    <small class="text-muted">{{ $user->created_at->diffForHumans() }}</small>
+                                                    <small class="text-muted">{{ optional(optional($u)->created_at)->diffForHumans() }}</small>
                                                 </div>
                                             </div>
                                         @empty
@@ -200,26 +200,26 @@
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h5 class="mb-0">
                                     <i class="bi bi-people text-primary me-2"></i>Gestion des utilisateurs
+                                    <span class="badge bg-secondary ms-2">Total: {{ $stats['total_utilisateurs'] ?? 0 }}</span>
                                 </h5>
-                                <button class="btn btn-primary">
-                                    <i class="bi bi-person-plus me-2"></i>Ajouter un utilisateur
-                                </button>
+                                <a href="{{ route('admin.utilisateurs.index') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-box-arrow-up-right me-2"></i>Ouvrir en plein écran
+                                </a>
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-hover">
+                                <table class="table table-hover align-middle">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Utilisateur</th>
                                             <th>Email</th>
                                             <th>Rôle</th>
                                             <th>Inscription</th>
-                                            <th>Statut</th>
-                                            <th>Actions</th>
+                                            <th class="text-end">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse($derniers_utilisateurs ?? [] as $user)
+                                        @forelse(($utilisateurs ?? collect()) as $u)
                                             <tr>
                                                 <td>
                                                     <div class="d-flex align-items-center">
@@ -227,46 +227,43 @@
                                                             <i class="bi bi-person-fill text-white"></i>
                                                         </div>
                                                         <div>
-                                                            <strong>{{ $user->prenom }} {{ $user->nom }}</strong>
-                                                            @if($user->telephone)
-                                                                <br><small class="text-muted">{{ $user->telephone }}</small>
+                                                            <strong>{{ optional($u)->prenom }} {{ optional($u)->nom }}</strong>
+                                                            @if(optional($u)->telephone)
+                                                                <br><small class="text-muted">{{ optional($u)->telephone }}</small>
                                                             @endif
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>{{ $user->email }}</td>
+                                                <td>{{ optional($u)->email }}</td>
                                                 <td>
-                                                    <span class="badge bg-{{ $user->role === 'admin' ? 'danger' : ($user->role === 'client' ? 'primary' : 'success') }}">
-                                                        {{ ucfirst($user->role) }}
+                                                    <span class="badge bg-{{ (optional($u)->role) === 'admin' ? 'danger' : ((optional($u)->role) === 'client' ? 'primary' : 'success') }}">
+                                                        {{ ucfirst(optional($u)->role) }}
                                                     </span>
                                                 </td>
-                                                <td>{{ $user->created_at->format('d/m/Y') }}</td>
-                                                <td>
-                                                    @if($user->email_verified_at)
-                                                        <span class="badge bg-success">Vérifié</span>
-                                                    @else
-                                                        <span class="badge bg-warning">En attente</span>
-                                                    @endif
-                                                </td>
-                                                <td>
+                                                <td>{{ optional(optional($u)->created_at)->format('d/m/Y') }}</td>
+                                                <td class="text-end">
                                                     <div class="btn-group btn-group-sm">
-                                                        <button class="btn btn-outline-primary" title="Voir">
+                                                        <a href="{{ route('admin.utilisateurs.show', $u) }}" class="btn btn-outline-primary" title="Voir">
                                                             <i class="bi bi-eye"></i>
-                                                        </button>
-                                                        <button class="btn btn-outline-warning" title="Modifier">
+                                                        </a>
+                                                        <a href="{{ route('admin.utilisateurs.edit', $u) }}" class="btn btn-outline-warning" title="Modifier">
                                                             <i class="bi bi-pencil"></i>
-                                                        </button>
-                                                        @if($user->role !== 'admin')
-                                                            <button class="btn btn-outline-danger" title="Supprimer">
-                                                                <i class="bi bi-trash"></i>
-                                                            </button>
+                                                        </a>
+                                                        @if(optional($u)->role !== 'admin')
+                                                            <form action="{{ route('admin.utilisateurs.destroy', $u) }}" method="POST" onsubmit="return confirm('Supprimer cet utilisateur ?')">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button class="btn btn-outline-danger" title="Supprimer">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            </form>
                                                         @endif
                                                     </div>
                                                 </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="text-center text-muted py-4">
+                                                <td colspan="5" class="text-center text-muted py-4">
                                                     <i class="bi bi-inbox"></i> Aucun utilisateur trouvé
                                                 </td>
                                             </tr>
@@ -274,6 +271,11 @@
                                     </tbody>
                                 </table>
                             </div>
+                            @if(isset($utilisateurs) && method_exists($utilisateurs, 'links'))
+                                <div>
+                                    {{ $utilisateurs->links() }}
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Gestion des véhicules -->

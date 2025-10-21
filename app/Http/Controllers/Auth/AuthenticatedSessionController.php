@@ -68,4 +68,36 @@ class AuthenticatedSessionController extends Controller
 
         return redirect('/');
     }
+
+    /**
+     * Display the admin login view.
+     */
+    public function createAdmin(): View
+    {
+        return view('auth.login', ['isAdmin' => true]);
+    }
+
+    /**
+     * Handle an admin authentication request.
+     */
+    public function storeAdmin(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
+        ]);
+
+        // Auth admin via admin guard uniquement
+        if (Auth::guard('admin')->attempt([
+            'email' => $request->email,
+            'password' => $request->password,
+        ], $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        return back()->withErrors([
+            'email' => 'Identifiants admin incorrects ou compte inexistant.',
+        ])->onlyInput('email');
+    }
 }

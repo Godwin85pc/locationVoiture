@@ -5,7 +5,7 @@
             <th>Prénom</th>
             <th>Email</th>
             <th>Rôle</th>
-            <th>Actions</th>
+            <th class="text-end">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -15,12 +15,13 @@
             <td>{{ $user->prenom }}</td>
             <td>{{ $user->email }}</td>
             <td>{{ $user->role }}</td>
-            <td>
+            <td class="text-end">
+                <a href="{{ route('admin.utilisateurs.show', $user) }}" class="btn btn-info btn-sm">Voir</a>
                 <a href="{{ route('utilisateurs.edit', $user->id) }}" class="btn btn-warning btn-sm">Modifier</a>
-                <form action="{{ route('utilisateurs.destroy', $user->id) }}" method="POST" style="display:inline;">
+                <form action="{{ route('utilisateurs.destroy', $user->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Supprimer ?')">
                     @csrf
                     @method('DELETE')
-                    <button class="btn btn-danger btn-sm" onclick="return confirm('Supprimer ?')">Supprimer</button>
+                    <button class="btn btn-danger btn-sm">Supprimer</button>
                 </form>
             </td>
         </tr>
