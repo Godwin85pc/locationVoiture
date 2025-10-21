@@ -57,11 +57,9 @@
     </div>
     
     <div class="d-grid gap-2">
-        <form action="{{ route('vehicules.step5') }}" method="POST">
+        <form action="" method="POST">
             @csrf
-            <button type="submit" class="btn btn-custom w-100">
-                <i class="fas fa-check me-2"></i>Valider l'annonce
-            </button>
+            
         </form>
         <a href="{{ route('dashboard') }}" class="btn btn-outline-primary">
             <i class="fas fa-tachometer-alt me-2"></i>Retour au tableau de bord

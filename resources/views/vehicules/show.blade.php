@@ -57,7 +57,13 @@
 
 <div class="container mt-4">
     <!-- Bouton retour -->
-    <a href="{{ route('vehicules.index') }}" class="btn btn-outline-secondary mb-3">
+    @php
+        $prevUrl = url()->previous();
+        $hasSessionRecherche = session()->has('recherche');
+        $fallbackUrl = $hasSessionRecherche ? route('recapitulatif', session('recherche')) : route('vehicules.index');
+        $backUrl = \Illuminate\Support\Str::contains($prevUrl, '/recapitulatif') ? $prevUrl : $fallbackUrl;
+    @endphp
+    <a href="{{ $backUrl }}" class="btn btn-outline-secondary mb-3">
         <i class="bi bi-arrow-left"></i> Retour
     </a>
 

@@ -25,6 +25,7 @@ Route::get('/', fn() => view('index'))->name('index');
 Route::get('/connection', function () {
     return redirect()->route('login');
 })->name('connection');
+Route::get('/louable', fn() => view('louable'))->name('louable');
 Route::get('/01-ajout_voiture', fn() => view('01-ajout_voiture'))->name('01-ajout_voiture');
 Route::get('/02-options_extras', fn() => view('02-options_extras'))->name('02-options_extras');
 Route::get('/03-maintenance', fn() => view('03-maintenance'))->name('03-maintenance');
@@ -53,14 +54,15 @@ Route::post('/avis', [AvisController::class, 'store'])->name('avis.store');
 // Routes pour calcul de prix
 // -------------------------
 Route::post('/vehicules/prix', [VehiculeController::class, 'calculPrix'])->name('vehicules.prix');
-
+  Route::resource('vehicules', VehiculeController::class);
 // -------------------------
 // ROUTE DE DEBUG TEMPORAIRE
 // -------------------------
 Route::get('/debug-vehicules-create', function() {
     return 'DEBUG: Route accessible. User: ' . (Auth::check() ? Auth::user()->name : 'Non connecté');
 });
-
+//ne tantepas d'effacer la route ci dako 
+Route::post('/vehicules', [VehiculeController::class, 'store'])->name('vehicules.store');
 Route::get('/debug-vehicule-controller', [VehiculeController::class, 'create']);
 
 // Test route resource sans middleware
@@ -165,7 +167,7 @@ Route::middleware(['auth:admin', 'admin'])->prefix('admin')->name('admin.')->gro
     // Notifications et validation véhicules
     Route::get('/notification', [AdminController::class, 'notificationVehicule'])->name('notification');
     Route::post('/vehicule/valider/{id}', [AdminController::class, 'validerVehicule'])->name('valider_vehicule');
-    
+    Route::get('/louable', fn() => view('louable'))->name('louable');
     // Offres d'agence
     Route::resource('offres', OffreAgenceController::class);
     Route::patch('offres/{offre}/toggle-status', [OffreAgenceController::class, 'toggleStatus'])->name('offres.toggle-status');

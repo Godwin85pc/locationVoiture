@@ -16,18 +16,12 @@ class Vehicule extends Model
         'proprietaire_id',
         'marque',
         'modele', 
-        'annee',
-        'couleur',
-        'numero_plaque',
         'type',
         'immatriculation',
         'prix_jour',
-        'prix_par_jour',
         'statut',
         'carburant',
-        'transmission',
         'nbre_places',
-        'nombre_places',
         'localisation',
         'photo',
         'kilometrage',
@@ -36,7 +30,6 @@ class Vehicule extends Model
         'motif_rejet',
         'disponible',
         'climatisation',
-        'gps'
     ];
 
     public $timestamps = true;
@@ -86,12 +79,12 @@ class Vehicule extends Model
 
     public function getNombrePlacesAttribute()
     {
-        return $this->attributes['nombre_places'] ?? $this->attributes['nbre_places'];
+        return $this->attributes['nbre_places'] ?? $this->attributes['nbre_places'];
     }
 
-    public function getNumeroplaqueAttribute() 
+    public function getImmatriculationAttribute() 
     {
-        return $this->attributes['numero_plaque'] ?? $this->attributes['immatriculation'];
+        return $this->attributes['immatriculation'] ?? $this->attributes['immatriculation'];
     }
 
     // Relation avec les réservations

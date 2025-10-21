@@ -33,6 +33,17 @@
                         <strong>Lieu de restitution :</strong><br>
                         {{ session('recherche.lieu_restitution') }}
                     </div>
+
+                    <div class="col-md-6">
+                <strong>Véhicules trouvés :</strong> {{ $vehiculesDisponibles->count() }}
+                    </div>
+
+            <!-- Bouton Modifier la recherche -->
+                <div class="d-flex justify-content-center mt-3">
+                <a href="{{ route('dashboard') }}" class="btn btn-primary btn-lg px-5 shadow">
+                <i class="bi bi-search"></i> Modifier la recherche
+            </a>
+        </div>
                 </div>
             </div>
         </div>

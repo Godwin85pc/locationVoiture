@@ -51,15 +51,7 @@
 <body>
 
 @php
-    $vehicule = session('vehicule', [
-        'marque' => 'Toyota',
-        'modele' => 'Corolla',
-        'type' => 'Berline',
-        'carburant' => 'Essence',
-        'localisation' => 'Paris',
-        'prix_jour' => 200,
-        'photo' => null
-    ]);
+    $vehicule = session('vehicule');
 @endphp
 
 <div class="container">
@@ -67,10 +59,10 @@
     <h2>Confirmation du véhicule</h2>
 
     @if($vehicule)
-      <p><strong>Marque :</strong> {{ $vehicule['marque'] ?? 'N/A' }}</p>
-      <p><strong>Modèle :</strong> {{ $vehicule['modele'] ?? 'N/A' }}</p>
-      <p><strong>Type :</strong> {{ $vehicule['type'] ?? 'N/A' }}</p>
-      <p><strong>Carburant :</strong> {{ $vehicule['carburant'] ?? 'N/A' }}</p>
+      <p><strong>Marque :</strong> {{ $vehicule['marque'] }}</p>
+      <p><strong>Modèle :</strong> {{ $vehicule['modele'] }}</p>
+      <p><strong>Type :</strong> {{ $vehicule['type'] }}</p>
+      <p><strong>Carburant :</strong> {{ $vehicule['carburant'] }}</p>
       <p><strong>Localisation :</strong> {{ $vehicule['localisation'] ?? '-' }}</p>
 
       @if(!empty($vehicule['photo']))
@@ -79,7 +71,7 @@
       @endif
 
       <div class="prix-box">
-        <h4>Prix par jour : {{ number_format($vehicule['prix_jour'] ?? 200, 0, ',', ' ') }} €</h4>
+        <h4>Prix par jour : {{ number_format($vehicule['prix_jour'], 0, ',', ' ') }}euro</h4>
         <small>Prix calculé automatiquement selon le type et le carburant.</small>
       </div>
 
@@ -93,36 +85,36 @@
         <div id="update-fields" class="update-fields">
           <div class="mb-3">
             <label class="form-label">Marque</label>
-            <input type="text" name="marque" class="form-control" value="{{ $vehicule['marque'] ?? '' }}">
+            <input type="text" name="marque" class="form-control" value="{{ $vehicule['marque'] }}">
           </div>
 
           <div class="mb-3">
             <label class="form-label">Modèle</label>
-            <input type="text" name="modele" class="form-control" value="{{ $vehicule['modele'] ?? '' }}">
+            <input type="text" name="modele" class="form-control" value="{{ $vehicule['modele'] }}">
           </div>
 
           <div class="mb-3">
             <label class="form-label">Type</label>
             <select name="type" class="form-select">
-              <option value="SUV" {{ ($vehicule['type'] ?? '') == 'SUV' ? 'selected' : '' }}>SUV</option>
-              <option value="Berline" {{ ($vehicule['type'] ?? '') == 'Berline' ? 'selected' : '' }}>Berline</option>
-              <option value="Utilitaire" {{ ($vehicule['type'] ?? '') == 'Utilitaire' ? 'selected' : '' }}>Utilitaire</option>
-              <option value="Citadine" {{ ($vehicule['type'] ?? '') == 'Citadine' ? 'selected' : '' }}>Citadine</option>
+              <option value="SUV" {{ $vehicule['type'] == 'SUV' ? 'selected' : '' }}>SUV</option>
+              <option value="Berline" {{ $vehicule['type'] == 'Berline' ? 'selected' : '' }}>Berline</option>
+              <option value="Utilitaire" {{ $vehicule['type'] == 'Utilitaire' ? 'selected' : '' }}>Utilitaire</option>
+              <option value="Citadine" {{ $vehicule['type'] == 'Citadine' ? 'selected' : '' }}>Citadine</option>
             </select>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Carburant</label>
             <select name="carburant" class="form-select">
-              <option value="Essence" {{ ($vehicule['carburant'] ?? '') == 'Essence' ? 'selected' : '' }}>Essence</option>
-              <option value="Diesel" {{ ($vehicule['carburant'] ?? '') == 'Diesel' ? 'selected' : '' }}>Diesel</option>
-              <option value="Electrique" {{ ($vehicule['carburant'] ?? '') == 'Electrique' ? 'selected' : '' }}>Electrique</option>
+              <option value="Essence" {{ $vehicule['carburant'] == 'Essence' ? 'selected' : '' }}>Essence</option>
+              <option value="Diesel" {{ $vehicule['carburant'] == 'Diesel' ? 'selected' : '' }}>Diesel</option>
+              <option value="Electrique" {{ $vehicule['carburant'] == 'Electrique' ? 'selected' : '' }}>Electrique</option>
             </select>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Localisation</label>
-            <input type="text" name="localisation" class="form-control" value="{{ $vehicule['localisation'] ?? '' }}">
+            <input type="text" name="localisation" class="form-control" value="{{ $vehicule['localisation'] }}">
           </div>
 
           <div class="mb-3">
@@ -132,15 +124,12 @@
         </div>
 
         <!-- Champs cachés pour conserver toutes les autres valeurs -->
-        @if(is_array($vehicule))
-          @foreach($vehicule as $key => $value)
-            @if(!in_array($key, ['marque','modele','type','carburant','localisation','photo']))
-              <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-            @endif
-          @endforeach
-        @endif
-        
-        <a href="{{ route('confirmation') }}" class="btn btn-custom w-100 mt-3">Confirmer et enregistrer</a>
+        @foreach($vehicule as $key => $value)
+          @if(!in_array($key, ['marque','modele','type','carburant','localisation','photo']))
+            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+          @endif
+        @endforeach
+     <a href="{{ route('confirmation') }}" class="btn btn-custom w-100 mt-3">Confirmer et enregistrer</a>
         
       </form>
 

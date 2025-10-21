@@ -58,74 +58,55 @@ class VehiculeController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'marque' => 'required|string|max:255',
-            'modele' => 'required|string|max:255',
-            'annee' => 'required|integer|min:1990|max:' . (date('Y') + 1),
-            'couleur' => 'required|string|max:255',
-            'numero_plaque' => 'required|string|max:255|unique:vehicules',
-            'type' => 'nullable|in:SUV,Berline,Utilitaire,Citadine',
-            'prix_par_jour' => 'nullable|numeric|min:0',
-            'description' => 'nullable|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'localisation' => 'required|string|max:255',
-            'carburant' => 'required|in:essence,diesel,electrique,hybride,Essence,Diesel,Electrique,Hybride',
-            'transmission' => 'nullable|in:manuelle,automatique',
-            'nombre_places' => 'required|integer|min:2|max:9',
-            'nbre_places' => 'nullable|integer|min:2|max:9',
-            'climatisation' => 'boolean',
-            'gps' => 'boolean',
-            'kilometrage' => 'nullable|integer|min:0',
-        ]);
+        $request->validate([  
+        'marque' => 'required|string|max:255',
+        'modele' => 'required|string|max:255',
+        'date_ajout' => 'required|date',
+        'type' => 'nullable|in:SUV,Berline,Utilitaire,Citadine',
+        'prix_jour' => 'nullable|numeric|min:0',
+        'description' => 'nullable|string',
+        'immatriculation' => 'required|string|max:255|unique:vehicules',
+        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'localisation' => 'required|string|max:255',
+        'carburant' => 'required|in:essence,diesel,electrique,hybride',
+        'nbre_places' => 'nullable|integer|min:2|max:9',
+        'kilometrage' => 'nullable|integer|min:0',
+    ]);
 
-        $vehicule = new Vehicule();
-        $vehicule->marque = $request->marque;
-        $vehicule->modele = $request->modele;
-        $vehicule->annee = $request->annee ?? date('Y');
-        $vehicule->couleur = $request->couleur ?? 'Non spécifiée';
-        $vehicule->numero_plaque = $request->numero_plaque;
-        $vehicule->type = $request->type ?? 'Citadine';
-        
-        // Calcul automatique du prix si non fourni
-        if ($request->filled('prix_par_jour')) {
-            $vehicule->prix_par_jour = $request->prix_par_jour;
-        } else {
-            $vehicule->prix_par_jour = $this->calculerPrixAutomatique(
-                $request->type ?? 'Citadine', 
-                ucfirst(strtolower($request->carburant))
-            );
-        }
-        
-        $vehicule->description = $request->description;
-        $vehicule->localisation = $request->localisation;
-        $vehicule->carburant = ucfirst(strtolower($request->carburant));
-        $vehicule->transmission = $request->transmission ?? 'manuelle';
-        $vehicule->nombre_places = $request->nombre_places ?? $request->nbre_places ?? 4;
-        $vehicule->nbre_places = $request->nbre_places ?? $request->nombre_places ?? 4;
-        $vehicule->climatisation = $request->has('climatisation');
-        $vehicule->gps = $request->has('gps');
-        $vehicule->kilometrage = $request->kilometrage ?? 0;
-        $vehicule->disponible = true;
-        $vehicule->statut = 'en_attente'; // Statut par défaut en attente de validation
-        $vehicule->proprietaire_id = Auth::id();
+    $vehicule = new Vehicule();
+    $vehicule->proprietaire_id = Auth::id();
+    $vehicule->marque = $request->marque;
+    $vehicule->modele = $request->modele;
+    $vehicule->immatriculation = $request->immatriculation; // ✅ bien utilisé ici
+    $vehicule->date_ajout = $request->date_ajout;
+    $vehicule->nbre_places = $request->nbre_places ?? 4; // valeur par défaut si vide
+    $vehicule->type = $request->type ?? 'Citadine';
+    $vehicule->description = $request->description ?? '';
+    $vehicule->localisation = $request->localisation;
+    $vehicule->carburant = ucfirst(strtolower($request->carburant));
+    $vehicule->kilometrage = $request->kilometrage ?? 0;
+    $vehicule->disponible = true;
+    $vehicule->statut = 'en_attente';
 
-        // Gestion de l'upload de photo
-        if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('vehicules', 'public');
-            $vehicule->photo = Storage::url($path);
-        }
+    // Calcul automatique du prix si non fourni
+    $vehicule->prix_par_jour = $request->prix_jour ?? $this->calculerPrixAutomatique($vehicule->type, $vehicule->carburant);
 
-        $vehicule->save();
-
-        // Stocker en session pour la page de résumé
-        session(['vehicule' => $vehicule->toArray()]);
-
-        // Redirection avec message de succès vers le dashboard
-        return redirect()->route('dashboard')
-            ->with('success', 'Véhicule soumis avec succès ! Il sera examiné par notre équipe.')
-            ->with('vehicule_id', $vehicule->id);
+    // Gestion de l'upload de photo
+    if ($request->hasFile('photo')) {
+        $path = $request->file('photo')->store('vehicules', 'public');
+        $vehicule->photo = Storage::url($path);
     }
 
+    $vehicule->save();
+
+    // Stocker en session pour la page de résumé
+    session(['vehicule' => $vehicule->toArray()]);
+
+    // Redirection vers l'étape suivante
+    return redirect()->route('02-options_extras')
+        ->with('success', 'Véhicule soumis avec succès ! Il sera examiné par notre équipe.')
+        ->with('vehicule_id', $vehicule->id);
+  }
     /**
      * Display the specified resource.
      */
@@ -162,7 +143,7 @@ class VehiculeController extends Controller
             'modele' => 'required|string|max:255',
             'annee' => 'required|integer|min:1990|max:' . (date('Y') + 1),
             'couleur' => 'required|string|max:255',
-            'numero_plaque' => 'required|string|max:255|unique:vehicules,numero_plaque,' . $vehicule->id,
+            'immatriculation' => 'required|string|max:255|unique:vehicules,immatriculation,' . $vehicule->id,
             'prix_par_jour' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -178,7 +159,7 @@ class VehiculeController extends Controller
         $vehicule->modele = $request->modele;
         $vehicule->annee = $request->annee;
         $vehicule->couleur = $request->couleur;
-        $vehicule->numero_plaque = $request->numero_plaque;
+        $vehicule->immatriculation = $request->immatriculation;
         $vehicule->prix_par_jour = $request->prix_par_jour;
         $vehicule->description = $request->description;
         $vehicule->localisation = $request->localisation;
@@ -236,10 +217,7 @@ class VehiculeController extends Controller
     }
 
     /**
-     * Méthode de recherche avancée
-    }
-
-    /**
+     
      * API endpoint pour récupérer les offres disponibles (utilisé par JavaScript)
      */
     public function offresDisponibles()
@@ -272,41 +250,56 @@ class VehiculeController extends Controller
      */
     public function rechercher(Request $request)
     {
-        // Version simplifiée pour le debug - validation plus permissive
-        $request->validate([
-            'lieu_recuperation' => 'required|string',
-            'dateDepart' => 'required|date',
-            'heureDepart' => 'required',
-            'lieu_restitution' => 'required|string',
-            'dateRetour' => 'required|date',
-            'heureRetour' => 'required',
-        ]);
+        // Supporter GET (retour) en réutilisant la session si aucun paramètre fourni
+        $isGet = $request->isMethod('get');
+        $input = $request->only(['lieu_recuperation','dateDepart','heureDepart','lieu_restitution','dateRetour','heureRetour','ageCheck']);
 
-        $dateDebutComplete = $request->dateDepart . ' ' . $request->heureDepart;
-        $dateFinComplete = $request->dateRetour . ' ' . $request->heureRetour;
+        if ($isGet && empty(array_filter($input))) {
+            // Reprendre depuis la session si dispo, sinon afficher tous les véhicules
+            $saved = session('recherche', []);
+            if (!empty($saved)) {
+                $request->merge($saved);
+                $input = $saved;
+            }
+        }
 
-        // Rechercher les véhicules disponibles - version simplifiée
-        $vehiculesDisponibles = Vehicule::where('disponible', true)
-            ->where('localisation', 'like', '%' . $request->lieu_recuperation . '%')
-            ->get();
+        // Validation: obligatoire en POST, optionnelle en GET (si session présente)
+        $rules = [
+            'lieu_recuperation' => ($isGet ? 'sometimes' : 'required') . '|string',
+            'dateDepart' => ($isGet ? 'sometimes' : 'required') . '|date',
+            'heureDepart' => ($isGet ? 'sometimes' : 'required'),
+            'lieu_restitution' => ($isGet ? 'sometimes' : 'required') . '|string',
+            'dateRetour' => ($isGet ? 'sometimes' : 'required') . '|date',
+            'heureRetour' => ($isGet ? 'sometimes' : 'required'),
+        ];
+        $validated = $request->validate($rules);
 
-        // Si aucun véhicule avec localisation, prendre tous les véhicules disponibles
+        // S'il manque des champs en GET, tenter de compléter par la session
+        if ($isGet) {
+            $saved = session('recherche', []);
+            $validated = array_merge($saved, $validated);
+        }
+
+        // Rechercher les véhicules disponibles (fallback: tous si pas de lieu)
+        $vehiculesQuery = Vehicule::where('disponible', true);
+        if (!empty($validated['lieu_recuperation'] ?? null)) {
+            $vehiculesQuery->where('localisation', 'like', '%' . $validated['lieu_recuperation'] . '%');
+        }
+        $vehiculesDisponibles = $vehiculesQuery->get();
         if ($vehiculesDisponibles->isEmpty()) {
             $vehiculesDisponibles = Vehicule::where('disponible', true)->get();
         }
 
-        // Stocker les critères de recherche en session
-        session([
-            'recherche' => [
-                'lieu_recuperation' => $request->lieu_recuperation,
-                'dateDepart' => $request->dateDepart,
-                'heureDepart' => $request->heureDepart,
-                'lieu_restitution' => $request->lieu_restitution,
-                'dateRetour' => $request->dateRetour,
-                'heureRetour' => $request->heureRetour,
-                'ageCheck' => $request->has('ageCheck'),
-            ]
-        ]);
+        // Mettre à jour la session avec les critères utilisés
+        session(['recherche' => [
+            'lieu_recuperation' => $validated['lieu_recuperation'] ?? ($saved['lieu_recuperation'] ?? null),
+            'dateDepart' => $validated['dateDepart'] ?? ($saved['dateDepart'] ?? null),
+            'heureDepart' => $validated['heureDepart'] ?? ($saved['heureDepart'] ?? null),
+            'lieu_restitution' => $validated['lieu_restitution'] ?? ($saved['lieu_restitution'] ?? null),
+            'dateRetour' => $validated['dateRetour'] ?? ($saved['dateRetour'] ?? null),
+            'heureRetour' => $validated['heureRetour'] ?? ($saved['heureRetour'] ?? null),
+            'ageCheck' => isset($validated['ageCheck']) ? (bool)$validated['ageCheck'] : (bool)($saved['ageCheck'] ?? false),
+        ]]);
 
         return view('recapitulatif', compact('vehiculesDisponibles'));
     }
@@ -556,7 +549,7 @@ class VehiculeController extends Controller
         // Données de base (étape 1)
         $vehicule->marque = $step1['marque'];
         $vehicule->modele = $step1['modele'];
-        $vehicule->numero_plaque = $step1['immatriculation'];
+        $vehicule->immatriculation = $step1['immatriculation'];
         $vehicule->localisation = $step1['localisation'];
     $vehicule->type = $step1['type'];
     // Normaliser le carburant pour l'ENUM BD
