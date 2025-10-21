@@ -84,7 +84,7 @@
     <div class="row">
         <!-- Image et infos principales -->
         <div class="col-md-6">
-            <img src="{{ $vehicule->photo ?? 'https://via.placeholder.com/400x400?text=Véhicule' }}" 
+            <img src="{{ $vehicule->photo_url }}" 
                  alt="{{ $vehicule->marque }}" 
                  class="vehicle-image shadow">
             

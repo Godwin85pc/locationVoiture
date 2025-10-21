@@ -38,7 +38,7 @@
                                         </div>
                                         
                                         @if($vehicule->photo)
-                                            <img src="{{ asset('storage/' . $vehicule->photo) }}" class="card-img-top" alt="Photo du véhicule" style="height: 200px; object-fit: cover;">
+                                            <img src="{{ $vehicule->photo_url }}" class="card-img-top" alt="Photo du véhicule" style="height: 200px; object-fit: cover;">
                                         @else
                                             <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
                                                 <i class="fas fa-car fa-3x text-muted"></i>
@@ -126,7 +126,7 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         @if($vehicule->photo)
-                                                            <img src="{{ asset('storage/' . $vehicule->photo) }}" alt="Photo" class="img-fluid rounded mb-3">
+                                                            <img src="{{ $vehicule->photo_url }}" alt="Photo" class="img-fluid rounded mb-3">
                                                         @endif
                                                         
                                                         <table class="table table-sm">

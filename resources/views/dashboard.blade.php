@@ -22,10 +22,16 @@
     @endif
 
     @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     @endif
     @if (session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     @endif
 
     {{-- LAYOUT AVEC SIDEBAR VERTICALE --}}
@@ -76,7 +82,7 @@
                         @forelse($vehiculesDisponibles as $vehicule)
                             <div class="col-lg-4 col-md-6">
                                 <div class="card shadow-sm h-100 border-0">
-                                    <img src="{{ $vehicule->photo ?? 'https://via.placeholder.com/400x200?text=V%C3%A9hicule' }}" 
+                             <img src="{{ $vehicule->photo_url }}" 
                                          class="card-img-top img-fluid" 
                                          alt="Image véhicule"
                                          style="object-fit: cover; height: 200px; width: 100%;">
@@ -118,7 +124,7 @@
                         @forelse($mesVehicules as $vehicule)
                             <div class="col-lg-4 col-md-6">
                                 <div class="card shadow-sm h-100 border-0">
-                                    <img src="{{ $vehicule->photo ?? 'https://via.placeholder.com/400x200?text=V%C3%A9hicule' }}" 
+                             <img src="{{ $vehicule->photo_url }}" 
                                          class="card-img-top img-fluid" 
                                          alt="Image véhicule"
                                          style="object-fit: cover; height: 200px; width: 100%;">
@@ -226,13 +232,20 @@
             <h4 class="mb-4 text-center text-primary fw-bold">
                 <i class="bi bi-calendar-check"></i> Réservez votre véhicule
             </h4>
-            <form method="POST" action="{{ route('recapitulatif') }}">
+            <form method="POST" action="{{ route('recapitulatif') }}" id="search-form">
                 @csrf
                 <div class="mb-4">
                     <label class="form-label fw-semibold" for="lieuRecup">
                         <i class="bi bi-geo-alt-fill text-primary"></i> Lieu de récupération :
                     </label>
                     <input type="text" class="form-control form-control-lg" id="lieuRecup" name="lieu_recuperation" placeholder="Entrez le lieu de récupération" required />
+
+                    <!-- Localisation précise (désactivée) -->
+                    <!--
+                    <input type="hidden" name="lieu_recuperation_lat" id="lieuRecup_lat" />
+                    <input type="hidden" name="lieu_recuperation_lon" id="lieuRecup_lon" />
+                    <div id="lieuRecup_suggestions" class="list-group position-absolute w-100" style="z-index: 2000; display: none; max-height: 240px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.08);"></div>
+                    -->
                 </div>
                 <div class="mb-4">
                     <label class="form-label fw-semibold">
@@ -240,10 +253,10 @@
                     </label>
                     <div class="row g-2">
                         <div class="col">
-                            <input type="date" class="form-control" name="dateDepart" required />
+                            <input type="date" class="form-control" name="dateDepart" id="dateDepart" required />
                         </div>
                         <div class="col">
-                            <input type="time" class="form-control" name="heureDepart" required />
+                            <input type="time" class="form-control" name="heureDepart" id="heureDepart" required />
                         </div>
                     </div>
                 </div>
@@ -252,6 +265,13 @@
                         <i class="bi bi-geo-alt text-primary"></i> Lieu de retour :
                     </label>
                     <input type="text" class="form-control form-control-lg" id="lieuRetour" name="lieu_restitution" placeholder="Entrez le lieu de retour" required />
+
+                    <!-- Localisation précise (désactivée) -->
+                    <!--
+                    <input type="hidden" name="lieu_restitution_lat" id="lieuRetour_lat" />
+                    <input type="hidden" name="lieu_restitution_lon" id="lieuRetour_lon" />
+                    <div id="lieuRetour_suggestions" class="list-group position-absolute w-100" style="z-index: 2000; display: none; max-height: 240px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.08);"></div>
+                    -->
                 </div>
                 <div class="mb-4">
                     <label class="form-label fw-semibold">
@@ -259,10 +279,10 @@
                     </label>
                     <div class="row g-2">
                         <div class="col">
-                            <input type="date" class="form-control" name="dateRetour" required />
+                            <input type="date" class="form-control" name="dateRetour" id="dateRetour" required />
                         </div>
                         <div class="col">
-                            <input type="time" class="form-control" name="heureRetour" required />
+                            <input type="time" class="form-control" name="heureRetour" id="heureRetour" required />
                         </div>
                     </div>
                 </div>
@@ -282,3 +302,124 @@
     </section>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    (function(){
+        const dateDepart = document.getElementById('dateDepart');
+        const heureDepart = document.getElementById('heureDepart');
+        const dateRetour = document.getElementById('dateRetour');
+        const heureRetour = document.getElementById('heureRetour');
+        const form = document.getElementById('search-form');
+
+        function setReturnMin(){
+            if(dateDepart && dateDepart.value){
+                // la date de retour ne peut pas être avant la date de départ
+                dateRetour.min = dateDepart.value;
+                if(dateRetour.value && dateRetour.value < dateDepart.value){
+                    dateRetour.value = dateDepart.value;
+                }
+            }
+        }
+
+        dateDepart && dateDepart.addEventListener('change', setReturnMin);
+        document.addEventListener('DOMContentLoaded', setReturnMin);
+
+        form && form.addEventListener('submit', function(e){
+            if(dateDepart && dateRetour){
+                const start = new Date(dateDepart.value + 'T' + (heureDepart?.value || '00:00'));
+                const end = new Date(dateRetour.value + 'T' + (heureRetour?.value || '00:00'));
+                if(end <= start){
+                    e.preventDefault();
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-danger alert-dismissible fade show';
+                    alert.role = 'alert';
+                    alert.innerHTML = `La date/heure de retour doit être postérieure à la date/heure de récupération.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                    form.parentElement.prepend(alert);
+                    // Caler la date de retour sur la date de départ
+                    dateRetour.value = dateDepart.value;
+                }
+            }
+        });
+
+        // Auto-hide flash alerts after 4s
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(a => {
+                if(a.classList.contains('show')){
+                    a.classList.remove('show');
+                }
+            });
+        }, 4000);
+
+        // ---------- Localisation précise via Nominatim (désactivée) ----------
+        // Le code ci-dessous active l'autocomplétion d'adresses et remplit les champs lat/lon.
+        // Pour l'activer, décommentez ce bloc ainsi que les champs HTML correspondants.
+        /*
+        function debounce(fn, wait) {
+            let t; return function(...args){ clearTimeout(t); t = setTimeout(() => fn.apply(this, args), wait); };
+        }
+        function createSuggestionItem(place) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'list-group-item list-group-item-action';
+            btn.textContent = place.display_name;
+            btn.dataset.lat = place.lat;
+            btn.dataset.lon = place.lon;
+            return btn;
+        }
+        async function nominatimSearch(q) {
+            if (!q || q.length < 3) return [];
+            const url = new URL('https://nominatim.openstreetmap.org/search');
+            url.searchParams.set('q', q);
+            url.searchParams.set('format', 'json');
+            url.searchParams.set('addressdetails', '0');
+            url.searchParams.set('limit', '8');
+            const res = await fetch(url.toString(), { headers: { 'Accept-Language': 'fr' } });
+            if (!res.ok) return [];
+            return res.json();
+        }
+        function hookupInput(inputId, suggestionsId, latId, lonId) {
+            const input = document.getElementById(inputId);
+            const sugBox = document.getElementById(suggestionsId);
+            const latField = document.getElementById(latId);
+            const lonField = document.getElementById(lonId);
+            if (!input || !sugBox) return;
+            let items = []; let selectedIndex = -1;
+            function clearSuggestions(){ sugBox.innerHTML=''; sugBox.style.display='none'; items=[]; selectedIndex=-1; }
+            input.addEventListener('blur', () => setTimeout(clearSuggestions, 150));
+            input.addEventListener('keydown', (ev) => {
+                if (!items.length) return;
+                if (ev.key === 'ArrowDown') { selectedIndex = Math.min(items.length-1, selectedIndex+1); items.forEach((it,i)=>it.classList.toggle('active', i===selectedIndex)); ev.preventDefault(); }
+                else if (ev.key === 'ArrowUp') { selectedIndex = Math.max(0, selectedIndex-1); items.forEach((it,i)=>it.classList.toggle('active', i===selectedIndex)); ev.preventDefault(); }
+                else if (ev.key === 'Enter') { ev.preventDefault(); if (selectedIndex>=0 && items[selectedIndex]) items[selectedIndex].click(); }
+                else if (ev.key === 'Escape') { clearSuggestions(); }
+            });
+            async function onType(){
+                const q = input.value.trim();
+                if (q.length < 3) { clearSuggestions(); return; }
+                try {
+                    const results = await nominatimSearch(q);
+                    sugBox.innerHTML='';
+                    if (!results || !results.length) { clearSuggestions(); return; }
+                    results.forEach(r => {
+                        const item = createSuggestionItem(r);
+                        item.addEventListener('click', () => {
+                            input.value = r.display_name;
+                            if (latField) latField.value = r.lat;
+                            if (lonField) lonField.value = r.lon;
+                            clearSuggestions();
+                        });
+                        sugBox.appendChild(item);
+                    });
+                    items = Array.from(sugBox.children); selectedIndex = -1; sugBox.style.display='';
+                } catch(e){ console.error('Autocomplete error', e); clearSuggestions(); }
+            }
+            input.addEventListener('input', debounce(onType, 300));
+        }
+        hookupInput('lieuRecup','lieuRecup_suggestions','lieuRecup_lat','lieuRecup_lon');
+        hookupInput('lieuRetour','lieuRetour_suggestions','lieuRetour_lat','lieuRetour_lon');
+        */
+    })();
+</script>
+@endpush

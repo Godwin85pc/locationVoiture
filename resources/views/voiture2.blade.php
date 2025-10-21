@@ -88,7 +88,7 @@
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card vehicle-card">
                     <!-- Image -->
-                    <img src="{{ $vehicule->photo ?? 'https://via.placeholder.com/400x200' }}" 
+                <img src="{{ $vehicule->photo_url }}" 
                          alt="{{ $vehicule->marque }}" class="vehicle-image">
 
                     <!-- Corps -->

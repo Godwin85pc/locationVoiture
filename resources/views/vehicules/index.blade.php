@@ -48,7 +48,7 @@
         @forelse($vehicules as $vehicule)
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100 shadow-sm">
-                    <img src="{{ $vehicule->photo ?? 'https://via.placeholder.com/400x200?text=Véhicule' }}" 
+                    <img src="{{ $vehicule->photo_url }}" 
                          class="card-img-top" 
                          style="height: 200px; object-fit: cover;" 
                          alt="{{ $vehicule->marque }} {{ $vehicule->modele }}">

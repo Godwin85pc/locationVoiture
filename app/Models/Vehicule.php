@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Avis;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Vehicule extends Model
 {
@@ -55,10 +57,33 @@ class Vehicule extends Model
         return $this->belongsTo(\App\Models\Utilisateur::class, 'proprietaire_id');
     }
 
-    // Pour la compatibilité avec votre dashboard
+    // URL normalisée de la photo (prend en charge URL externe, chemin Storage, ou vide)
+    public function getPhotoUrlAttribute()
+    {
+        $photo = $this->photo ?? '';
+
+        if (!$photo || trim($photo) === '') {
+            return 'https://via.placeholder.com/400x200?text=Véhicule';
+        }
+
+        // Si déjà une URL absolue (http/https), retourner telle quelle
+        if (Str::startsWith($photo, ['http://', 'https://'])) {
+            return $photo;
+        }
+
+        // Si commence par /storage ou storage -> asset direct
+        if (Str::startsWith($photo, ['/storage/', 'storage/'])) {
+            return asset(ltrim($photo, '/'));
+        }
+
+        // Dans les autres cas, considérer que c'est un chemin sur le disque public
+        return Storage::url($photo);
+    }
+
+    // Pour compatibilité éventuelle avec un ancien nom d'attribut
     public function getImageUrlAttribute()
     {
-        return $this->photo ?? 'https://via.placeholder.com/400x200?text=Véhicule';
+        return $this->photo_url;
     }
 
     public function offres()

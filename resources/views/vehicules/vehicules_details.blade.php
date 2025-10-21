@@ -20,7 +20,7 @@
 
 <div class="container mt-4">
     <div class="text-center mb-3">
-        <img src="{{ $vehicule->photo ? asset($vehicule->photo) : 'https://via.placeholder.com/500x250' }}" class="img-fluid rounded mb-3">
+    <img src="{{ $vehicule->photo_url }}" class="img-fluid rounded mb-3">
         <h4>{{ $vehicule->marque }} {{ $vehicule->modele }}</h4>
         <p class="text-muted">{{ ucfirst($vehicule->type ?? 'Disponible') }} - {{ ucfirst($vehicule->statut ?? 'Disponible') }}</p>
     </div>

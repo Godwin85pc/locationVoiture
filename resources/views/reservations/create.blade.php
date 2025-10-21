@@ -54,7 +54,7 @@
                         <i class="fas fa-box"></i> Standard 
                     @endif
                 </span>
-                <img src="{{ $vehicule->photo ?? 'https://via.placeholder.com/400x200' }}" class="card-img-top" alt="{{ $vehicule->marque }}">
+                <img src="{{ $vehicule->photo_url }}" class="card-img-top" alt="{{ $vehicule->marque }}">
                 <div class="card-body">
                     <h5 class="card-title">{{ $vehicule->marque }} {{ $vehicule->modele }}</h5>
                     <ul class="list-unstyled">
@@ -98,7 +98,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="firstName" class="form-label">Prénom *</label>
-                                <input type="text" name="prenom" id="firstName" class="form-control" required>
+                                <input type="text" name="prenom" id="firstName" class="form-control"  value="{{ Auth::user()->prenom ?? '' }}"  required>
                                 <div class="error-message" id="firstName-error"></div>
                             </div>
                         </div>
@@ -120,12 +120,12 @@
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3">
                                 <label for="date_debut" class="form-label">Date de début *</label>
-                                <input type="date" name="date_debut" id="date_debut" class="form-control" required>
+                                <input type="date" name="date_debut" id="date_debut" class="form-control" value="{{ session('recherche.dateDepart') }}" required>
                                 <div class="error-message" id="date_debut-error"></div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="date_fin" class="form-label">Date de fin *</label>
-                                <input type="date" name="date_fin" id="date_fin" class="form-control" required>
+                                <input type="date" name="date_fin" id="date_fin" class="form-control" value="{{ session('recherche.dateRetour') }}" required>
                                 <div class="error-message" id="date_fin-error"></div>
                             </div>
                         </div>
@@ -135,12 +135,12 @@
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3">
                                 <label for="lieu_recuperation" class="form-label">Lieu de récupération *</label>
-                                <input type="text" name="lieu_recuperation" id="lieu_recuperation" class="form-control" required>
+                                <input type="text" name="lieu_recuperation" id="lieu_recuperation" class="form-control" value=" {{ session('recherche.lieu_recuperation') }}" required>
                                 <div class="error-message" id="lieu_recuperation-error"></div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="lieu_restitution" class="form-label">Lieu de restitution *</label>
-                                <input type="text" name="lieu_restitution" id="lieu_restitution" class="form-control" required>
+                                <input type="text" name="lieu_restitution" id="lieu_restitution" class="form-control" value="{{ session('recherche.lieu_restitution') }}" required>
                                 <div class="error-message" id="lieu_restitution-error"></div>
                             </div>
                         </div>
@@ -148,28 +148,29 @@
                         <hr class="my-4">
 
                         <!-- Informations paiement -->
-                        <h5 class="section-title mb-4">Informations de paiement</h5>
+                        <h5 class="section-title mb-2">Informations de paiement</h5>
+                        <p class="text-muted">Ces informations ne seront pas enregistrées pour le moment. Le paiement sera effectué plus tard.</p>
                         <div class="row mb-3">
                             <div class="col-12 mb-3">
-                                <label for="cardholder" class="form-label">Titulaire de la carte *</label>
-                                <input type="text" id="cardholder" name="cardholder" class="form-control" required>
+                                <label for="cardholder" class="form-label">Titulaire de la carte</label>
+                                <input type="text" id="cardholder" name="cardholder" class="form-control">
                                 <div class="error-message" id="cardholder-error"></div>
                             </div>
                             <div class="col-12 mb-3">
-                                <label for="cardNumber" class="form-label">Numéro de carte *</label>
-                                <input type="text" id="cardNumber" name="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" required>
+                                <label for="cardNumber" class="form-label">Numéro de carte</label>
+                                <input type="text" id="cardNumber" name="cardNumber" class="form-control" placeholder="1234 5678 9012 3456">
                                 <div class="error-message" id="cardNumber-error"></div>
                             </div>
                         </div>
                         <div class="row mb-4">
                             <div class="col-md-4 mb-3">
-                                <label for="expiryDate" class="form-label">Date d'expiration *</label>
-                                <input type="text" id="expiryDate" name="expiryDate" class="form-control" placeholder="MM/AA" required>
+                                <label for="expiryDate" class="form-label">Date d'expiration</label>
+                                <input type="text" id="expiryDate" name="expiryDate" class="form-control" placeholder="MM/AA">
                                 <div class="error-message" id="expiryDate-error"></div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label for="cvv" class="form-label">CVV *</label>
-                                <input type="text" id="cvv" name="cvv" class="form-control" placeholder="123" required>
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" id="cvv" name="cvv" class="form-control" placeholder="123">
                                 <div class="error-message" id="cvv-error"></div>
                             </div>
                         </div>
@@ -258,17 +259,17 @@ form.addEventListener('submit', function(e){
     e.preventDefault();
     let valid = true;
 
+    // Champs requis côté client (hors paiement)
     const requiredFields = ['lastName','firstName','email','phone',
-                            'cardholder','cardNumber','expiryDate','cvv',
                             'terms','date_debut','date_fin','lieu_recuperation','lieu_restitution'];
 
     requiredFields.forEach(id => {
         const field = document.getElementById(id);
         const error = document.getElementById(id+'-error');
-        if(!field.checkValidity()){
-            error.textContent = 'Ce champ est obligatoire';
+        if(field && !field.checkValidity()){
+            error && (error.textContent = 'Ce champ est obligatoire');
             valid = false;
-        } else { error.textContent = ''; }
+        } else { if (error) error.textContent = ''; }
     });
 
     if(valid){ form.submit(); }

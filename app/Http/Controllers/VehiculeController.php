@@ -271,8 +271,31 @@ class VehiculeController extends Controller
             'lieu_restitution' => ($isGet ? 'sometimes' : 'required') . '|string',
             'dateRetour' => ($isGet ? 'sometimes' : 'required') . '|date',
             'heureRetour' => ($isGet ? 'sometimes' : 'required'),
+            'lieu_recuperation_lat' => 'sometimes|nullable|numeric',
+            'lieu_recuperation_lon' => 'sometimes|nullable|numeric',
+            'lieu_restitution_lat' => 'sometimes|nullable|numeric',
+            'lieu_restitution_lon' => 'sometimes|nullable|numeric',
         ];
         $validated = $request->validate($rules);
+
+        // Validation d'ordre: retour doit être strictement après le départ (date+heure)
+        if (($request->filled('dateDepart') && $request->filled('heureDepart') && $request->filled('dateRetour') && $request->filled('heureRetour')) ||
+            ($isGet && !empty($validated))) {
+            try {
+                $start = \Carbon\Carbon::parse(($request->dateDepart ?? $validated['dateDepart'] ?? '') . ' ' . ($request->heureDepart ?? $validated['heureDepart'] ?? '00:00'));
+                $end = \Carbon\Carbon::parse(($request->dateRetour ?? $validated['dateRetour'] ?? '') . ' ' . ($request->heureRetour ?? $validated['heureRetour'] ?? '00:00'));
+                if ($start && $end && $end->lessThanOrEqualTo($start)) {
+                    return redirect()->route('dashboard')
+                        ->withInput()
+                        ->with('error', 'La date/heure de retour doit être postérieure à la date/heure de récupération.');
+                }
+            } catch (\Exception $e) {
+                // En cas de parsing invalide, retourner au dashboard avec erreur
+                return redirect()->route('dashboard')
+                    ->withInput()
+                    ->with('error', 'Les dates/horaires fournis sont invalides.');
+            }
+        }
 
         // S'il manque des champs en GET, tenter de compléter par la session
         if ($isGet) {
@@ -293,9 +316,13 @@ class VehiculeController extends Controller
         // Mettre à jour la session avec les critères utilisés
         session(['recherche' => [
             'lieu_recuperation' => $validated['lieu_recuperation'] ?? ($saved['lieu_recuperation'] ?? null),
+            'lieu_recuperation_lat' => $validated['lieu_recuperation_lat'] ?? ($saved['lieu_recuperation_lat'] ?? null),
+            'lieu_recuperation_lon' => $validated['lieu_recuperation_lon'] ?? ($saved['lieu_recuperation_lon'] ?? null),
             'dateDepart' => $validated['dateDepart'] ?? ($saved['dateDepart'] ?? null),
             'heureDepart' => $validated['heureDepart'] ?? ($saved['heureDepart'] ?? null),
             'lieu_restitution' => $validated['lieu_restitution'] ?? ($saved['lieu_restitution'] ?? null),
+            'lieu_restitution_lat' => $validated['lieu_restitution_lat'] ?? ($saved['lieu_restitution_lat'] ?? null),
+            'lieu_restitution_lon' => $validated['lieu_restitution_lon'] ?? ($saved['lieu_restitution_lon'] ?? null),
             'dateRetour' => $validated['dateRetour'] ?? ($saved['dateRetour'] ?? null),
             'heureRetour' => $validated['heureRetour'] ?? ($saved['heureRetour'] ?? null),
             'ageCheck' => isset($validated['ageCheck']) ? (bool)$validated['ageCheck'] : (bool)($saved['ageCheck'] ?? false),

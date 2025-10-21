@@ -54,7 +54,7 @@
         @forelse($vehiculesDisponibles as $vehicule)
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100 shadow-sm">
-                    <img src="{{ $vehicule->photo ?? 'https://img.leboncoin.fr/api/v1/lbcpb1/images/fd/98/d5/fd98d5e6dfcc55e5aaf297dff5309730e3293c3d.jpg?rule=ad-large' }}" 
+                        <img src="{{ $vehicule->photo_url }}" 
                          class="card-img-top" 
                          style="height: 200px; object-fit: cover;" 
                          alt="{{ $vehicule->marque }} {{ $vehicule->modele }}">
@@ -123,7 +123,13 @@
                                 $crit = session('recherche', []);
                                 $dateDebut = isset($crit['dateDepart']) ? \Carbon\Carbon::parse(($crit['dateDepart'] ?? '') . ' ' . ($crit['heureDepart'] ?? '00:00')) : null;
                                 $dateFin = isset($crit['dateRetour']) ? \Carbon\Carbon::parse(($crit['dateRetour'] ?? '') . ' ' . ($crit['heureRetour'] ?? '00:00')) : null;
-                                $nombreJours = ($dateDebut && $dateFin) ? max(1, $dateDebut->diffInDays($dateFin)) : 1;
+                                if ($dateDebut && $dateFin) {
+                                    $seconds = $dateDebut->diffInSeconds($dateFin);
+                                    $daysFloat = $seconds / 86400;
+                                    $nombreJours = max(1, (int) ceil($daysFloat));
+                                } else {
+                                    $nombreJours = 1;
+                                }
                                 $prixJour = $vehicule->prix_par_jour ?? $vehicule->prix_jour;
                                 $prixStandard = $nombreJours * ($prixJour ?? 0);
                                 $prixPremium = round($prixStandard * 1.3, 2); // Aligné avec ReservationController

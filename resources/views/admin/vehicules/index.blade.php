@@ -64,7 +64,7 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         @if($vehicule->photo)
-                                                            <img src="{{ asset('storage/' . $vehicule->photo) }}" alt="Photo" class="rounded me-2" width="50" height="40" style="object-fit: cover;">
+                                                            <img src="{{ $vehicule->photo_url }}" alt="Photo" class="rounded me-2" width="50" height="40" style="object-fit: cover;">
                                                         @else
                                                             <div class="bg-secondary rounded me-2 d-flex align-items-center justify-content-center" style="width: 50px; height: 40px;">
                                                                 <i class="fas fa-car text-white"></i>
@@ -116,7 +116,7 @@
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     @if($vehicule->photo)
-                                                                        <img src="{{ asset('storage/' . $vehicule->photo) }}" alt="Photo" class="img-fluid rounded mb-3">
+                                                                        <img src="{{ $vehicule->photo_url }}" alt="Photo" class="img-fluid rounded mb-3">
                                                                     @endif
                                                                     
                                                                     <table class="table table-sm">
@@ -222,7 +222,7 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         @if($vehicule->photo)
-                                                            <img src="{{ asset('storage/' . $vehicule->photo) }}" alt="Photo" class="rounded me-2" width="50" height="40" style="object-fit: cover;">
+                                                            <img src="{{ $vehicule->photo_url }}" alt="Photo" class="rounded me-2" width="50" height="40" style="object-fit: cover;">
                                                         @else
                                                             <div class="bg-secondary rounded me-2 d-flex align-items-center justify-content-center" style="width: 50px; height: 40px;">
                                                                 <i class="fas fa-car text-white"></i>
@@ -288,7 +288,7 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         @if($vehicule->photo)
-                                                            <img src="{{ asset('storage/' . $vehicule->photo) }}" alt="Photo" class="rounded me-2" width="50" height="40" style="object-fit: cover;">
+                                                            <img src="{{ $vehicule->photo_url }}" alt="Photo" class="rounded me-2" width="50" height="40" style="object-fit: cover;">
                                                         @else
                                                             <div class="bg-secondary rounded me-2 d-flex align-items-center justify-content-center" style="width: 50px; height: 40px;">
                                                                 <i class="fas fa-car text-white"></i>
