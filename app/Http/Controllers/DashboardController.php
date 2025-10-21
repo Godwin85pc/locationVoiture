@@ -10,7 +10,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $vehiculesDisponibles = Vehicule::where('disponible', true)->get();
+        $vehiculesDisponibles = Vehicule::where('disponible', true)
+            ->where('statut', 'disponible')
+            ->get();
         $mesVehicules = Auth::user()->vehicules; // relation à définir
         $mesReservations = Auth::user()->reservations; // relation à définir
         // $mesReservations = auth()->user()->reservations; // relation à définir
@@ -26,7 +28,9 @@ class DashboardController extends Controller
         // Utiliser l'admin connecté (guard admin) pour un aperçu
         $admin = Auth::guard('admin')->user();
         // Données du dashboard utilisateur sans dépendre d'un user web
-        $vehiculesDisponibles = Vehicule::where('disponible', true)->get();
+        $vehiculesDisponibles = Vehicule::where('disponible', true)
+            ->where('statut', 'disponible')
+            ->get();
         $mesVehicules = method_exists($admin, 'vehicules') ? $admin->vehicules : collect();
         $mesReservations = method_exists($admin, 'reservations') ? $admin->reservations : collect();
 

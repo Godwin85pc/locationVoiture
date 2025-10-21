@@ -15,7 +15,8 @@ class VehiculeController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Vehicule::where('disponible', true);
+        $query = Vehicule::where('disponible', true)
+            ->where('statut', 'disponible');
 
         // Filtrer par lieu de récupération si fourni
         if ($request->filled('lieu_recuperation')) {
@@ -40,7 +41,7 @@ class VehiculeController extends Controller
             $query->whereNotIn('id', $vehiculesReserves);
         }
 
-        $vehicules = $query->with('proprietaire')->get();
+    $vehicules = $query->with('proprietaire')->get();
 
         return view('vehicules.index', compact('vehicules'));
     }
@@ -223,6 +224,7 @@ class VehiculeController extends Controller
     public function offresDisponibles()
     {
         $vehicules = Vehicule::where('disponible', true)
+            ->where('statut', 'disponible')
             ->with('proprietaire')
             ->get()
             ->map(function($vehicule) {
@@ -304,7 +306,8 @@ class VehiculeController extends Controller
         }
 
         // Rechercher les véhicules disponibles (fallback: tous si pas de lieu)
-        $vehiculesQuery = Vehicule::where('disponible', true);
+        $vehiculesQuery = Vehicule::where('disponible', true)
+            ->where('statut', 'disponible');
         if (!empty($validated['lieu_recuperation'] ?? null)) {
             $vehiculesQuery->where('localisation', 'like', '%' . $validated['lieu_recuperation'] . '%');
         }
