@@ -23,22 +23,14 @@
                 <label class="form-label">Téléphone</label>
                 <input type="text" name="telephone" class="form-control" value="{{ old('telephone', $utilisateur->telephone) }}">
             </div>
-            <div class="col-md-6">
-                <label class="form-label">Rôle</label>
-                <select name="role" class="form-select" required>
-                    @foreach(['admin','client','particulier'] as $r)
-                        <option value="{{ $r }}" @selected(old('role', $utilisateur->role) === $r)>{{ ucfirst($r) }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Nouveau mot de passe (optionnel)</label>
-                <input type="password" name="password" class="form-control" placeholder="Laisser vide pour ne pas changer">
-            </div>
+            
         </div>
-        <div class="mt-4 d-flex gap-2">
+        <div class="mt-4 d-flex flex-wrap gap-2">
             <button class="btn btn-primary"><i class="bi bi-save me-2"></i>Enregistrer</button>
             <a href="{{ route('admin.utilisateurs.index') }}" class="btn btn-outline-secondary">Annuler</a>
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-dark">
+                <i class="bi bi-arrow-left-circle me-1"></i> Retour au dashboard
+            </a>
         </div>
     </form>
 </div>

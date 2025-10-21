@@ -6,9 +6,14 @@
         <h2 class="fw-bold">
             <i class="bi bi-person-badge me-2"></i>Détails utilisateur
         </h2>
-        <a href="{{ route('admin.utilisateurs.index') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Retour à la liste
-        </a>
+        <div class="d-flex gap-2">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-dark">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="{{ route('admin.utilisateurs.index') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Retour à la liste
+            </a>
+        </div>
     </div>
 
     <div class="row g-4">

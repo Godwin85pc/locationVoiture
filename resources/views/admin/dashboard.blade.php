@@ -142,30 +142,8 @@
                         <!-- Vue d'ensemble -->
                         <div class="tab-pane fade show active" id="overview" role="tabpanel">
                             <div class="row g-4">
-                                <!-- Graphique utilisateurs par rôle -->
-                                <div class="col-lg-6">
-                                    <h5 class="mb-3">
-                                        <i class="bi bi-pie-chart text-primary me-2"></i>Répartition des utilisateurs
-                                    </h5>
-                                    <div class="bg-light rounded p-4">
-                                        @if(isset($utilisateurs_par_role))
-                                            @foreach($utilisateurs_par_role as $role => $count)
-                                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                                    <span class="fw-semibold text-capitalize">
-                                                        <i class="bi bi-person-badge me-2 text-{{ $role === 'admin' ? 'danger' : ($role === 'client' ? 'primary' : 'success') }}"></i>
-                                                        {{ ucfirst($role) }}
-                                                    </span>
-                                                    <span class="badge bg-{{ $role === 'admin' ? 'danger' : ($role === 'client' ? 'primary' : 'success') }}">
-                                                        {{ $count }}
-                                                    </span>
-                                                </div>
-                                            @endforeach
-                                        @endif
-                                    </div>
-                                </div>
-
                                 <!-- Derniers utilisateurs -->
-                                <div class="col-lg-6">
+                                <div class="col-12">
                                     <h5 class="mb-3">
                                         <i class="bi bi-person-plus text-success me-2"></i>Nouveaux utilisateurs
                                     </h5>
