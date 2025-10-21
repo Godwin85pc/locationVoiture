@@ -127,6 +127,19 @@ class AdminController extends Controller
         $vehicule->statut = 'disponible';
         $vehicule->save();
 
+        // Créer une offre liée si aucune n'existe déjà
+        if (!OffreVehicule::where('vehicule_id', $vehicule->id)->exists()) {
+            OffreVehicule::create([
+                'vehicule_id' => $vehicule->id,
+                'prix_par_jour' => $vehicule->prix_par_jour ?? $vehicule->prix_jour,
+                'description_offre' => $vehicule->description,
+                'date_debut_offre' => Carbon::today(),
+                'date_fin_offre' => Carbon::today()->addYear(),
+                'statut' => 'active',
+                'created_by' => optional(auth('admin')->user())->id,
+            ]);
+        }
+
         // Envoi du mail au propriétaire
         try {
             Mail::to($vehicule->proprietaire->email)->send(new VehiculeValideMail($vehicule));

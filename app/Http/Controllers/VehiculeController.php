@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Vehicule;
 use App\Models\Reservation;
+use App\Models\OffreVehicule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class VehiculeController extends Controller
 {
@@ -370,6 +372,19 @@ class VehiculeController extends Controller
     {
         $vehicule = Vehicule::findOrFail($id);
         $vehicule->update(['statut' => 'disponible']);
+
+        // Créer une offre associée si elle n'existe pas déjà
+        if (!OffreVehicule::where('vehicule_id', $vehicule->id)->exists()) {
+            OffreVehicule::create([
+                'vehicule_id' => $vehicule->id,
+                'prix_par_jour' => $vehicule->prix_par_jour ?? $vehicule->prix_jour,
+                'description_offre' => $vehicule->description,
+                'date_debut_offre' => Carbon::today(),
+                'date_fin_offre' => Carbon::today()->addYear(),
+                'statut' => 'active',
+                'created_by' => optional(Auth::guard('admin')->user())->id,
+            ]);
+        }
 
         return redirect()->route('admin.vehicules.index')->with('success', 'Véhicule approuvé avec succès.');
     }
