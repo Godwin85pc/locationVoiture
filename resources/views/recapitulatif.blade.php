@@ -54,7 +54,7 @@
         @forelse($vehiculesDisponibles as $vehicule)
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100 shadow-sm">
-                    <img src="{{ $vehicule->photo ?? 'https://via.placeholder.com/400x200?text=Véhicule' }}" 
+                    <img src="{{ $vehicule->photo ?? 'https://img.leboncoin.fr/api/v1/lbcpb1/images/fd/98/d5/fd98d5e6dfcc55e5aaf297dff5309730e3293c3d.jpg?rule=ad-large' }}" 
                          class="card-img-top" 
                          style="height: 200px; object-fit: cover;" 
                          alt="{{ $vehicule->marque }} {{ $vehicule->modele }}">
@@ -112,14 +112,86 @@
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h4 class="text-success mb-0">{{ $vehicule->prix_par_jour ?? $vehicule->prix_jour }} €<small>/jour</small></h4>
                             </div>
-                            
-                            <div class="d-grid gap-2">
-                                <a href="{{ route('vehicules.show', $vehicule) }}" class="btn btn-outline-primary btn-sm">
+
+                            <div class="mb-2">
+                                <a href="{{ route('vehicules.show', $vehicule) }}" class="btn btn-outline-primary btn-sm w-100">
                                     <i class="bi bi-eye"></i> Voir détails
                                 </a>
-                                <a href="{{ route('reservations.create', $vehicule) }}" class="btn btn-success btn-sm">
-                                    <i class="bi bi-calendar-plus"></i> Réserver maintenant
-                                </a>
+                            </div>
+
+                            @php
+                                $crit = session('recherche', []);
+                                $dateDebut = isset($crit['dateDepart']) ? \Carbon\Carbon::parse(($crit['dateDepart'] ?? '') . ' ' . ($crit['heureDepart'] ?? '00:00')) : null;
+                                $dateFin = isset($crit['dateRetour']) ? \Carbon\Carbon::parse(($crit['dateRetour'] ?? '') . ' ' . ($crit['heureRetour'] ?? '00:00')) : null;
+                                $nombreJours = ($dateDebut && $dateFin) ? max(1, $dateDebut->diffInDays($dateFin)) : 1;
+                                $prixJour = $vehicule->prix_par_jour ?? $vehicule->prix_jour;
+                                $prixStandard = $nombreJours * ($prixJour ?? 0);
+                                $prixPremium = round($prixStandard * 1.3, 2); // Aligné avec ReservationController
+                            @endphp
+
+                            <!-- PACK STANDARD -->
+                            <div class="card mb-2 border-primary">
+                                <div class="card-header bg-primary text-white py-1">
+                                    <h6 class="mb-0" style="font-size: 0.95rem;"><i class="fas fa-box"></i> PACK STANDARD</h6>
+                                </div>
+                                <div class="card-body py-2">
+                                    <ul class="list-unstyled mb-2 small">
+                                        <li><i class="fas fa-check text-success"></i> Responsabilité civile</li>
+                                        <li><i class="fas fa-check text-success"></i> Assurance tous risques avec franchise</li>
+                                        <li><i class="fas fa-check text-success"></i> {{ number_format($nombreJours * 750) }} Km inclus</li>
+                                        <li><i class="fas fa-check text-success"></i> Annulation gratuite</li>
+                                    </ul>
+                                    <div class="text-center mb-2">
+                                        <p class="mb-1"><span class="badge bg-info">{{ $nombreJours }} jour(s)</span></p>
+                                        <h5 class="text-primary mb-0">{{ number_format($prixStandard, 2) }} €</h5>
+                                        <small class="text-muted">({{ number_format($prixJour ?? 0, 2) }} €/jour)</small>
+                                    </div>
+                                    <a href="{{ route('reservations.create', [
+                                        'vehicule' => $vehicule->id,
+                                        'pack' => 'standard',
+                                        'date_debut' => $crit['dateDepart'] ?? null,
+                                        'date_fin' => $crit['dateRetour'] ?? null,
+                                        'lieu_recuperation' => $crit['lieu_recuperation'] ?? null,
+                                        'lieu_restitution' => $crit['lieu_restitution'] ?? null,
+                                    ]) }}" class="btn btn-primary w-100 btn-sm">
+                                        <i class="fas fa-calendar-check"></i> Réserver
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- PACK PREMIUM -->
+                            <div class="card mb-2 border-warning">
+                                <div class="card-header bg-warning text-dark py-1">
+                                    <h6 class="mb-0" style="font-size: 0.95rem;"><i class="fas fa-crown"></i> PACK PREMIUM</h6>
+                                </div>
+                                <div class="card-body py-2">
+                                    <ul class="list-unstyled mb-2 small">
+                                        <li><i class="fas fa-check text-success"></i> Responsabilité civile</li>
+                                        <li><i class="fas fa-check text-success"></i> Assurance tous risques</li>
+                                        <li><i class="fas fa-check text-success"></i> <strong>Remboursement des franchises</strong></li>
+                                        <li><i class="fas fa-check text-success"></i> {{ number_format($nombreJours * 1000) }} Km inclus</li>
+                                        <li><i class="fas fa-check text-success"></i> GPS inclus</li>
+                                        <li><i class="fas fa-check text-success"></i> Conducteur additionnel gratuit</li>
+                                    </ul>
+                                    <div class="text-center mb-2">
+                                        <p class="mb-1">
+                                            <span class="badge bg-info">{{ $nombreJours }} jour(s)</span>
+                                            <span class="badge bg-success">+30%</span>
+                                        </p>
+                                        <h5 class="text-warning mb-0">{{ number_format($prixPremium, 2) }} €</h5>
+                                        <small class="text-muted">({{ number_format(($prixPremium / max(1,$nombreJours)), 2) }} €/jour)</small>
+                                    </div>
+                                    <a href="{{ route('reservations.create', [
+                                        'vehicule' => $vehicule->id,
+                                        'pack' => 'premium',
+                                        'date_debut' => $crit['dateDepart'] ?? null,
+                                        'date_fin' => $crit['dateRetour'] ?? null,
+                                        'lieu_recuperation' => $crit['lieu_recuperation'] ?? null,
+                                        'lieu_restitution' => $crit['lieu_restitution'] ?? null,
+                                    ]) }}" class="btn btn-warning w-100 btn-sm text-dark">
+                                        <i class="fas fa-crown"></i> Réserver
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
