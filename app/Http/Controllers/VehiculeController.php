@@ -352,41 +352,42 @@ class VehiculeController extends Controller
      */
     public function adminIndex()
     {
-        $vehicules = Vehicule::with(['proprietaire'])->orderBy('created_at', 'desc')->get();
-        
+        // Préparer les listes par statut attendues par la vue
+        $vehiculesEnAttente = Vehicule::where('statut', 'en_attente')
+            ->with('proprietaire')
+            ->latest()
+            ->get();
+
+        $vehiculesValides = Vehicule::where('statut', 'disponible')
+            ->with(['proprietaire', 'reservations'])
+            ->latest()
+            ->get();
+
+        $vehiculesRejetes = Vehicule::where('statut', 'rejete')
+            ->with('proprietaire')
+            ->latest()
+            ->get();
+
         $stats = [
-            'total' => $vehicules->count(),
-            'en_attente' => $vehicules->where('statut', 'en_attente')->count(),
-            'disponibles' => $vehicules->where('statut', 'disponible')->count(),
-            'loues' => $vehicules->where('statut', 'loue')->count(),
-            'rejetes' => $vehicules->where('statut', 'rejete')->count(),
+            'total' => ($vehiculesEnAttente->count() + $vehiculesValides->count() + $vehiculesRejetes->count()),
+            'en_attente' => $vehiculesEnAttente->count(),
+            'disponibles' => $vehiculesValides->count(),
+            'rejetes' => $vehiculesRejetes->count(),
         ];
 
-        return view('admin.vehicules.index', compact('vehicules', 'stats'));
+        return view('admin.vehicules.index', compact('vehiculesEnAttente', 'vehiculesValides', 'vehiculesRejetes', 'stats'));
     }
 
     /**
      * Approve a vehicle (admin only).
      */
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
         $vehicule = Vehicule::findOrFail($id);
         $vehicule->update(['statut' => 'disponible']);
 
-        // Créer une offre associée si elle n'existe pas déjà
-        if (!OffreVehicule::where('vehicule_id', $vehicule->id)->exists()) {
-            OffreVehicule::create([
-                'vehicule_id' => $vehicule->id,
-                'prix_par_jour' => $vehicule->prix_par_jour ?? $vehicule->prix_jour,
-                'description_offre' => $vehicule->description,
-                'date_debut_offre' => Carbon::today(),
-                'date_fin_offre' => Carbon::today()->addYear(),
-                'statut' => 'active',
-                'created_by' => optional(Auth::guard('admin')->user())->id,
-            ]);
-        }
-
-        return redirect()->route('admin.vehicules.index')->with('success', 'Véhicule approuvé avec succès.');
+        // Uniquement rediriger vers le dashboard admin avec un flash non permanent
+        return redirect()->route('admin.dashboard')->with('success', 'Véhicule approuvé avec succès.');
     }
 
     /**
@@ -404,7 +405,22 @@ class VehiculeController extends Controller
             'motif_rejet' => $validated['motif_rejet'] ?? 'Véhicule rejeté par l\'administrateur'
         ]);
 
-        return redirect()->route('admin.vehicules.index')->with('success', 'Véhicule rejeté.');
+        // Rediriger vers le dashboard admin avec un message flash
+        return redirect()->route('admin.dashboard')->with('success', 'Véhicule rejeté.');
+    }
+
+    /**
+     * Remettre un véhicule en attente (admin only)
+     */
+    public function adminResume(Request $request, $id)
+    {
+        $vehicule = Vehicule::findOrFail($id);
+        $vehicule->update([
+            'statut' => 'en_attente',
+            'motif_rejet' => null,
+        ]);
+
+        return redirect()->route('admin.dashboard')->with('success', 'Véhicule remis en attente.');
     }
 
     /**

@@ -87,7 +87,7 @@
                                                     <strong>{{ number_format($vehicule->prix_par_jour ?? $vehicule->prix_jour, 0, ',', ' ') }} €</strong>
                                                 </td>
                                                 <td>
-                                                    {{ $vehicule->date_ajout ? $vehicule->date_ajout->format('d/m/Y H:i') : $vehicule->created_at->format('d/m/Y H:i') }}
+                                                    {{ optional($vehicule->date_ajout)->format('d/m/Y H:i') ?? optional($vehicule->created_at)->format('d/m/Y H:i') ?? '' }}
                                                 </td>
                                                 <td>
                                                     <div class="btn-group" role="group">
@@ -245,7 +245,7 @@
                                                     <strong>{{ number_format($vehicule->prix_par_jour ?? $vehicule->prix_jour, 0, ',', ' ') }} €</strong>
                                                 </td>
                                                 <td>
-                                                    {{ $vehicule->updated_at->format('d/m/Y H:i') }}
+                                                    {{ optional($vehicule->updated_at)->format('d/m/Y H:i') ?? optional($vehicule->created_at)->format('d/m/Y H:i') ?? '' }}
                                                 </td>
                                                 <td>
                                                     <span class="badge badge-info">{{ $vehicule->reservations->count() }}</span>
@@ -311,7 +311,7 @@
                                                     <small class="text-danger">{{ $vehicule->motif_rejet ?? 'Aucun motif spécifié' }}</small>
                                                 </td>
                                                 <td>
-                                                    {{ $vehicule->updated_at->format('d/m/Y H:i') }}
+                                                    {{ optional($vehicule->updated_at)->format('d/m/Y H:i') ?? optional($vehicule->created_at)->format('d/m/Y H:i') ?? '' }}
                                                 </td>
                                                 <td>
                                                     <div class="btn-group" role="group">

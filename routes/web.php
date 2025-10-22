@@ -189,7 +189,7 @@ Route::middleware(['auth:admin', 'admin'])->prefix('admin')->name('admin.')->gro
     Route::get('/vehicules', [VehiculeController::class, 'adminIndex'])->name('vehicules.index');
     Route::patch('/vehicules/{vehicule}/approve', [VehiculeController::class, 'approve'])->name('vehicules.approve');
     Route::patch('/vehicules/{vehicule}/reject', [VehiculeController::class, 'reject'])->name('vehicules.reject');
-    Route::patch('/vehicules/{vehicule}/resume', [VehiculeController::class, 'resume'])->name('vehicules.resume');
+    Route::patch('/vehicules/{vehicule}/resume', [VehiculeController::class, 'adminResume'])->name('vehicules.resume');
     
     // Notifications admin
     Route::get('/notifications/vehicules', [AdminController::class, 'notificationVehicule'])->name('notifications.vehicules');

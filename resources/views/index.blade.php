@@ -61,8 +61,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link active" href="#">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Véhicules</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Réservations</a></li>
+                    
                     <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}">Se connecter</a>
@@ -89,7 +88,7 @@
         <div class="row justify-content-center">
             <div class="col-md-4 mb-4 fade-in delay-2">
                 <div class="card card-vehicule shadow-sm">
-                    <img src="" class="card-img-top" alt="SUV">
+                    <img src="https://www.topgear.com/sites/default/files/2024/09/PEUGEOT_3008_EXT_13.jpg" class="card-img-top" alt="SUV">
                     <div class="card-body">
                         <h5 class="card-title">SUV Confort</h5>
                         <p class="card-text">Idéal pour les familles et les longs trajets. Espace et sécurité garantis.</p>
@@ -99,7 +98,7 @@
             </div>
             <div class="col-md-4 mb-4 fade-in delay-2">
                 <div class="card card-vehicule shadow-sm">
-                    <img src="" class="card-img-top" alt="Berline">
+                    <img src="https://wordpress-content.vroomly.com/wp-content/uploads/2023/03/461740-les-berlines-en-2021-resister-aux-vus.jpeg" class="card-img-top" alt="Berline">
                     <div class="card-body">
                         <h5 class="card-title">Berline Élégante</h5>
                         <p class="card-text">Pour vos déplacements professionnels ou privés avec style et confort.</p>
@@ -109,7 +108,7 @@
             </div>
             <div class="col-md-4 mb-4 fade-in delay-2">
                 <div class="card card-vehicule shadow-sm">
-                    <img src="" class="card-img-top" alt="Citadine">
+                    <img src="https://im.qccdn.fr/node/guide-d-achat-citadine-5275/thumbnail_800x480px-150292.jpg" class="card-img-top" alt="Citadine">
                     <div class="card-body">
                         <h5 class="card-title">Citadine Pratique</h5>
                         <p class="card-text">Parfaite pour la ville, facile à garer et économique en carburant.</p>
@@ -193,8 +192,8 @@
             <!-- Infos à gauche -->
             <div class="pe-3">
                 <p class="mb-1"><strong>AutoLocation+</strong></p>
-                <p class="mb-1">123 Rue de la Location</p>
-                <p class="mb-0">Ville, Pays</p>
+                <p class="mb-1">123 Ste Anne</p>
+                <p class="mb-0">Limoges, France</p>
             </div>
             <!-- Infos à droite -->
             <div class="text-end ps-3">

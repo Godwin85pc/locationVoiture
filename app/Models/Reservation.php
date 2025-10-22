@@ -37,4 +37,12 @@ class Reservation extends Model
     {
         return $this->belongsTo(Utilisateur::class, 'client_id');
     }
+
+    /**
+     * Cast attributes to proper types for safe date formatting in views.
+     */
+    protected $casts = [
+        'date_debut' => 'datetime',
+        'date_fin' => 'datetime',
+    ];
 }
